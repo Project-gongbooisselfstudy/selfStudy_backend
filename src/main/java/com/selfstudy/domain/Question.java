@@ -7,12 +7,6 @@ public class Question {
     private String answer;
     private String classification;
 
-    public Question(int id, String question, String answer, String classification) {
-        this.id = id;
-        this.question = question;
-        this.answer = answer;
-        this.classification = classification;
-    }
 
     public int getId() {
         return id;
