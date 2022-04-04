@@ -4,9 +4,12 @@ build/
 gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+#내가 추가함#
 gradlew
 gradlew.bat
 gradle/wrapper
+/src/main/resources/application.properties
 
 ### STS ###
 .apt_generated
