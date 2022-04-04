@@ -3,7 +3,7 @@ package com.selfstudy.domain;
 public class Question {
 
     private int id;
-    private String question;
+    private String contents;
     private String answer;
     private String classification;
 
@@ -16,12 +16,12 @@ public class Question {
         this.id = id;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getContents() {
+        return contents;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 
     public String getAnswer() {
