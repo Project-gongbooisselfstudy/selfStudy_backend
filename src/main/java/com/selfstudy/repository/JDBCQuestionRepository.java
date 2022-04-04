@@ -5,19 +5,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Member;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@Repository
 public class JDBCQuestionRepository implements QuestionRepository {
 
     private List store = new ArrayList<>();
     private final JdbcTemplate jdbcTemplate;
-
 
     public JDBCQuestionRepository(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
@@ -25,37 +23,39 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     @Override
     public void saveQuestion(Question question) {
-        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
-        jdbcInsert.withTableName("testQuestion").usingGeneratedKeyColumns("id");
-        Map<String , Object> parameters = new HashMap<>();
+        String sql = "INSERT INTO testQuestion(id,question, answer, classification) VALUES (?,?,?,?)";
+        Object[] Params = {question.getId(),question.getContents(), question.getAnswer(), question.getClassification()};
+        jdbcTemplate.update(sql,Params);
 
-        parameters.put("question", question.getQuestion());
-
-//        List parameters = new ArrayList();
-//        parameters.add(question.getId());
-//        parameters.add(question.getQuestion());
-//        parameters.add(question.getAnswer());
-//        parameters.add(question.getClassification());
-
-        Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
-        question.setId(key.intValue());
-        System.out.println("========저장 완료========");
+        System.out.println("========Repository : 저장 완료========");
     }
 
     @Override
-    public List<Question> findById(int questionId) {
+    public List<Question> findAll() {
         return jdbcTemplate.query("select * from question",questionRowMapper());
     }
 
     @Override
-    public void modifyQuestion(Question question) {
+    public List<Question> findByQuestion(String contents) {
+        return null;
     }
+
+
+    @Override
+    public void modifyQuestion(Question question) {}
+
+
+    @Override
+    public void deleteQuestion(Question question){}
+
 
     private RowMapper<Question> questionRowMapper(){
         return (rs, rowNum) -> {
             Question question = new Question();
             question.setId(rs.getInt("id"));
-            question.setQuestion(rs.getString("question"));
+            question.setContents(rs.getString("question"));
+            question.setAnswer(rs.getString("answer"));
+            question.setClassification(rs.getString("classification"));
             return question;
         };
 
