@@ -1,30 +1,20 @@
 package com.selfstudy.service;
 
 import com.selfstudy.domain.Question;
-import com.selfstudy.repository.QuestionRepository;
 
-public class  QuestionService {
+import java.util.List;
 
-    private final QuestionRepository questionRepository;
-
-
-    public QuestionService(QuestionRepository questionRepository) {
-        this.questionRepository = questionRepository;
-    }
-    // 실제 비즈니스 로직
+public interface QuestionService {
 
 
-    public Question saveQuestion(Question question) {
-        questionRepository.saveQuestion(question);
-        System.out.println("========문제 저장 완료========");
-        return question;
-        }
+    int saveQuestion(Question question);
 
-    // 모든 문제 조회
+    List<Question> findAllQuestion();
 
-    public Question findAllQuestion() {
-        return null;
-    }
+    Question modifyQuestion(Question question);
+
+    void deleteQuestion(Question question);
+
+
 
 }
-
