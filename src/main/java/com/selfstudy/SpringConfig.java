@@ -5,6 +5,7 @@ import com.selfstudy.domain.Question;
 import com.selfstudy.repository.JDBCQuestionRepository;
 import com.selfstudy.repository.QuestionRepository;
 import com.selfstudy.service.QuestionService;
+import com.selfstudy.service.QuestionServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,10 +22,11 @@ public class SpringConfig {
     }
 
 
-    @Bean
-    public QuestionService questionService() {
-        return new QuestionService(questionRepository());
-    }
+//    @Bean
+//    public QuestionServiceImpl questionService() {
+//        JDBCQuestionRepository QuestionRepository;
+//        return new QuestionServiceImpl(JDBCQuestionRepository);
+//    }
 
     @Bean
     public QuestionRepository questionRepository() {
