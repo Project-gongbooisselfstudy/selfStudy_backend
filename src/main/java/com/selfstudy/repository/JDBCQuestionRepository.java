@@ -38,7 +38,6 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     @Override
     public List<Question> findAll() {
-        ResultSet resultSet = null;
         System.out.println("==============Repository : findAll 실행==============");
         return jdbcTemplate.query("select * from testQuestion",questionRowMapper());
     }
