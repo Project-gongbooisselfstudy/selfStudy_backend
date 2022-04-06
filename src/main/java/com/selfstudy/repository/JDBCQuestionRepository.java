@@ -21,39 +21,49 @@ public class JDBCQuestionRepository implements QuestionRepository {
     private List store = new ArrayList<>();
     private final JdbcTemplate jdbcTemplate;
 
-
-
     public JDBCQuestionRepository(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
+
 
     @Override
     public void saveQuestion(Question question) {
         String sql = "INSERT INTO testQuestion(question_id, wrong, user_id , question, classification , answer) VALUES (?,?,?,?,?,?)";
         Object[] Params = {question.getQuestion_id(), question.getWrong(), question.getUser_id(), question.getContents(),question.getClassification(), question.getAnswer()};
         jdbcTemplate.update(sql,Params);
-
-        System.out.println("========Repository : 저장 완료========");
     }
 
     @Override
     public List<Question> findAll() {
-        System.out.println("==============Repository : findAll 실행==============");
         return jdbcTemplate.query("select * from testQuestion",questionRowMapper());
     }
 
     @Override
-    public List<Question> findByQuestion(String contents) {
-        return null;
+    public List<Question> findById(String user_id) {
+        String sql = "select * from testQuestion where user_id = ?";
+        List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),user_id);
+        return result;
     }
 
+    @Override
+    public Optional<Question> findByQuestion(int question_id){
+        String sql = "select * from testQuestion where question_id = ?";
+        List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),question_id);
+        return result.stream().findFirst();
+    }
 
     @Override
     public void modifyQuestion(Question question) {}
 
 
     @Override
-    public void deleteQuestion(Question question){}
+    public String deleteQuestion(int question_id){
+        String sql = "delete from testQuestion where question_id = ?";
+        jdbcTemplate.update(sql,question_id);
+        return "해당 문제가 삭제되었습니다";
+    }
+
+
 
     private RowMapper<Question> questionRowMapper() {
         return (rs, rowNum) -> {
@@ -67,6 +77,12 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
             return question;
         };
+    }
+
+    public int getQuestion_id(){
+        String sql = "SELECT max(question_id) FROM testQuestion;";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class);
+        return count;
     }
 
 

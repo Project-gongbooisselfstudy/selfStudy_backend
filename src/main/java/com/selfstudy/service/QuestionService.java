@@ -1,8 +1,10 @@
 package com.selfstudy.service;
 
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.selfstudy.domain.Question;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface QuestionService {
 
@@ -11,9 +13,13 @@ public interface QuestionService {
 
     List<Question> findAllQuestion();
 
+    List<Question> findById(String user_id);
+
+    Optional<Question> findByQuestion(int question_id);
+
     Question modifyQuestion(Question question);
 
-    void deleteQuestion(Question question);
+    String deleteQuestion(int question_id);
 
 
 

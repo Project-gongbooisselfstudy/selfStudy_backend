@@ -1,6 +1,7 @@
 package com.selfstudy;
 
 
+import com.selfstudy.controller.QuestionController;
 import com.selfstudy.domain.Question;
 import com.selfstudy.repository.JDBCQuestionRepository;
 import com.selfstudy.repository.QuestionRepository;
@@ -33,10 +34,9 @@ public class SpringConfig {
         return new JDBCQuestionRepository(dataSource);
     }
 
-    @Bean Question question(){
+    @Bean
+    Question question() {
         return new Question();
-
-
     }
 
 }

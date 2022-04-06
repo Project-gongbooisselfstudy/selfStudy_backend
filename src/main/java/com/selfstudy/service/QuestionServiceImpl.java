@@ -5,15 +5,10 @@ import com.selfstudy.repository.JDBCQuestionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
-    
-//    private final QuestionRepository questionRepository ;
-//
-//    public QuestionServiceImpl(QuestionRepository questionRepository) {
-//        this.questionRepository = JDBCQuestionRepository;
-//    }
 
     private final JDBCQuestionRepository jdbcQuestionRepository;
 
@@ -21,19 +16,30 @@ public class QuestionServiceImpl implements QuestionService {
         this.jdbcQuestionRepository = jdbcQuestionRepository;
     }
 
+
     @Override
     public int saveQuestion(Question question) {
 //        validateDuplicateQuestion(question);
         jdbcQuestionRepository.saveQuestion(question);
-        System.out.println("===========Service: DB에 저장 완료===========");
         return question.getQuestion_id();
     }
     
     @Override
     public List<Question> findAllQuestion() {
-        System.out.println("===========Service: findAllQuestion 실행===========");
         return jdbcQuestionRepository.findAll();
     }
+
+    @Override
+    public List<Question> findById(String user_id){
+        return jdbcQuestionRepository.findById(user_id);
+
+    }
+
+    @Override
+    public Optional<Question> findByQuestion(int question_id){
+        return jdbcQuestionRepository.findByQuestion(question_id);
+    }
+
 
     @Override
     public Question modifyQuestion(Question question) {
@@ -41,22 +47,24 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void deleteQuestion(Question question) {
-
+    public String deleteQuestion(int question_id) {
+        return jdbcQuestionRepository.deleteQuestion(question_id);
     }
 
-    private void validateDuplicateQuestion(Question question) {
-        try {
-            List<Question> tmp = jdbcQuestionRepository.findByQuestion(question.getContents());
 
-            if (tmp.size() != 0) {
-                throw new IllegalStateException("이미 존재하는 문제입니다");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+//    private void validateDuplicateQuestion(Question question) {
+//        try {
+//            List<Question> tmp = jdbcQuestionRepository.findByQuestion(question.getContents());
+//
+//            if (tmp.size() != 0) {
+//                throw new IllegalStateException("이미 존재하는 문제입니다");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         
     }
 
-}
+
 

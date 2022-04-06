@@ -4,10 +4,10 @@ public class Question {
 
     private int question_id;
     private int wrong;
-
-
     private String user_id;
     private String contents;
+    private String answer;
+    private String classification;
 
     public int getQuestion_id() {
         return question_id;
@@ -57,8 +57,6 @@ public class Question {
         this.classification = classification;
     }
 
-    private String answer;
-    private String classification;
 
 
 
