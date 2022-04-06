@@ -21,7 +21,6 @@ public class QuestionController {
     private QuestionServiceImpl questionServiceIm;
     private Question question;
     private JDBCQuestionRepository jdbcQuestionRepository;
-//    private int count =jdbcQuestionRepository.getQuestion_id();
 
     public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository,  Question question) {
         this.jdbcTemplate = jdbcTemplate;
