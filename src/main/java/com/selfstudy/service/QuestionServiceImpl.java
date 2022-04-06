@@ -25,12 +25,13 @@ public class QuestionServiceImpl implements QuestionService {
     public int saveQuestion(Question question) {
 //        validateDuplicateQuestion(question);
         jdbcQuestionRepository.saveQuestion(question);
-        System.out.println("===========Controller: DB에 저장 완료===========");
-        return question.getId(); 
+        System.out.println("===========Service: DB에 저장 완료===========");
+        return question.getQuestion_id();
     }
     
     @Override
     public List<Question> findAllQuestion() {
+        System.out.println("===========Service: findAllQuestion 실행===========");
         return jdbcQuestionRepository.findAll();
     }
 
