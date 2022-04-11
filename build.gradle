@@ -23,6 +23,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation "mysql:mysql-connector-java:8.0.21"
 
+	// 배포를 위한 의존성 추가
+	implementation "org.springframework.boot:spring-boot-starter-tomcat"
+
 }
 
 tasks.named('test') {
