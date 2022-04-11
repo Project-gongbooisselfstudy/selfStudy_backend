@@ -79,6 +79,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
         };
     }
 
+    //controller에서 사용하는 메소드
     public int getQuestion_id(){
         String sql = "SELECT max(question_id) FROM testQuestion;";
         int count = jdbcTemplate.queryForObject(sql, Integer.class);
