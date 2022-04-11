@@ -1,4 +1,8 @@
 
+# DB가 선택이 안됐다는 메세지 뜰 때 사용
+use TESTDB;
+
+
 CREATE TABLE `User` (
 	`user_id`	VARCHAR(255)	NOT NULL,
 	`name`	VARCHAR(10)	NOT NULL,
@@ -106,7 +110,6 @@ create table testQuestion
 
 
 
-
 create table testWrong
 (
     wrong_id    int          not null,
@@ -115,4 +118,15 @@ create table testWrong
     constraint testWrong_pk
         primary key (wrong_id)
 )default character set utf8 collate utf8_general_ci;
+
+ALTER TABLE testWrong ADD UNIQUE (question_id,user_id);
+
+
+# 실행 안됨
+# ALTER TABLE `testWrong` ADD CONSTRAINT `FK_testQuestion_TO_testWrong` FOREIGN KEY (
+# 	`question_id`, `user_id`
+# )
+# REFERENCES `testQuestion` (
+# 	`question_id` , `user_id`
+# );
 
