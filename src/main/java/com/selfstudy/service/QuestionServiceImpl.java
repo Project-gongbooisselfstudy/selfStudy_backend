@@ -51,6 +51,15 @@ public class QuestionServiceImpl implements QuestionService {
         return jdbcQuestionRepository.deleteQuestion(question_id);
     }
 
+    public List<Question> randomQuestionNext() {
+        return jdbcQuestionRepository.randomNext();
+    }
+
+    public List<Question> randomQuestionPrev() {
+        return jdbcQuestionRepository.randomPrev();
+    }
+
+
 
 
 //    private void validateDuplicateQuestion(Question question) {

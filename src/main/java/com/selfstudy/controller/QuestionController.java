@@ -17,10 +17,13 @@ import java.util.Optional;
 @RestController
 public class QuestionController {
 
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
     private QuestionServiceImpl questionServiceIm;
     private Question question;
     private JDBCQuestionRepository jdbcQuestionRepository;
+
+
+
 
     public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository,  Question question) {
         this.jdbcTemplate = jdbcTemplate;
@@ -38,9 +41,9 @@ public class QuestionController {
         // TODO 여기를 사용자가 직접 바꿀 수 있어야함
         qu.setQuestion_id(++count);
         qu.setWrong(0);
-        qu.setUser_id("user2");
-        qu.setContents("오늘 무슨요일이게?");
-        qu.setAnswer("Wednesday");
+        qu.setUser_id("user3");
+        qu.setContents("정답은?");
+        qu.setAnswer("4번");
         qu.setClassification("test");
         questionServiceIm.saveQuestion(qu);
         return qu;
@@ -76,5 +79,14 @@ public class QuestionController {
         return questionServiceIm.deleteQuestion(question_id);
     }
 
+    @RequestMapping(value = "question/randomNext")
+    public List<Question> randomQuestionNext(){
+        return questionServiceIm.randomQuestionNext();
+    }
+
+    @RequestMapping(value = "question/randomPrev")
+    public List<Question> randomQuestionPrev(){
+        return questionServiceIm.randomQuestionPrev();
+    }
 
 }

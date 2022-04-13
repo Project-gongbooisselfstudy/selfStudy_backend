@@ -14,17 +14,21 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Repository
 public class JDBCQuestionRepository implements QuestionRepository {
 
     private List store = new ArrayList<>();
     private final JdbcTemplate jdbcTemplate;
+    private int idx = 0;
+    private List<Integer> randomList = new ArrayList<>();
 
     public JDBCQuestionRepository(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
 
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        makeRandomList();
+    }
 
     @Override
     public void saveQuestion(Question question) {
@@ -51,6 +55,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
         List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),question_id);
         return result.stream().findFirst();
     }
+
 
     @Override
     public void modifyQuestion(Question question) {}
@@ -79,6 +84,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
         };
     }
 
+
     //controller에서 사용하는 메소드
     public int getQuestion_id(){
         String sql = "SELECT max(question_id) FROM testQuestion;";
@@ -87,4 +93,59 @@ public class JDBCQuestionRepository implements QuestionRepository {
     }
 
 
+    private RowMapper<Integer> questionIDRowMapper() {
+        return (rs, rowNum) -> {
+            Question question = new Question();
+            question.setQuestion_id(rs.getInt("question_id"));
+            return question.getQuestion_id();
+        };
     }
+
+
+    public void makeRandomList() {
+        String sql = "select question_id from testQuestion";
+        List<Integer> result = jdbcTemplate.query(sql,questionIDRowMapper());
+        Collections.shuffle(result);
+        randomList = result;
+//        System.out.println("randomList : "+randomList.toString());
+    }
+
+    private RowMapper<Question> randomRowMapper() {
+        return (rs, rowNum) -> {
+            Question qu = new Question();
+            qu.setContents(rs.getString("question"));
+            qu.setClassification(rs.getString("classification"));
+            qu.setAnswer(rs.getString("answer"));
+            return qu;
+        };
+    }
+
+    //TODO 더이상의 문제가 없는데 idx를 계속 늘리는 경우도 대비해야함.
+    public List<Question> randomNext() {
+        String sql = "select  question, classification, answer from testQuestion where question_id= ? ";
+        try {
+        List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
+        idx+=1 ;
+        return result;
+        }
+        catch (Exception e ) {
+            System.out.println("더이상의 문제가 없습니다");
+            return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx-1)); }
+    }
+
+
+    public List<Question> randomPrev() {
+        String sql = "select  question, classification, answer from testQuestion where question_id = ?";
+        try {
+            List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
+            idx-=1 ;
+            return result;
+        }
+        catch (Exception e ) {
+            System.out.println("더이상의 문제가 없습니다");
+            return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx+1)); }
+    }
+
+
+
+}
