@@ -51,10 +51,12 @@ public class QuestionServiceImpl implements QuestionService {
         return jdbcQuestionRepository.deleteQuestion(question_id);
     }
 
+    @Override
     public List<Question> randomQuestionNext() {
         return jdbcQuestionRepository.randomNext();
     }
 
+    @Override
     public List<Question> randomQuestionPrev() {
         return jdbcQuestionRepository.randomPrev();
     }

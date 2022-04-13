@@ -21,7 +21,9 @@ public interface QuestionRepository {
     Optional<Question> findByQuestion(int question_id);
 
     // 랜덤 문제 조회
-//    Question randomQuestion();
+    public List<Question> randomNext();
+    public List<Question> randomPrev();
+
 
 
     // 문제 수정

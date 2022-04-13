@@ -121,6 +121,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     }
 
     //TODO 더이상의 문제가 없는데 idx를 계속 늘리는 경우도 대비해야함.
+    @Override
     public List<Question> randomNext() {
         String sql = "select  question, classification, answer from testQuestion where question_id= ? ";
         try {
@@ -133,7 +134,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
             return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx-1)); }
     }
 
-
+    @Override
     public List<Question> randomPrev() {
         String sql = "select  question, classification, answer from testQuestion where question_id = ?";
         try {
