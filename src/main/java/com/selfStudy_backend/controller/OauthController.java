@@ -20,6 +20,8 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 
+import java.util.Optional;
+
 
 @RestController
 @CrossOrigin
@@ -71,6 +73,9 @@ public class OauthController {
         User user2 = new User();
         user2.setG_id(id);
         user2.setG_name(name);
+
+
+
 
         oauthService.saveUser(user2);
 

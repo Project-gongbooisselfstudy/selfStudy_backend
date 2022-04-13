@@ -9,4 +9,5 @@ public interface OauthServices {
     String requestAccessToken(SocialLoginType socialLoginType, String code);
     SocialOauth findSocialOauthByType(SocialLoginType socialLoginType);
     String saveUser(User user);
+
 }

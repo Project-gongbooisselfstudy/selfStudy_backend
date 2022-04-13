@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OauthServicesImple implements OauthServices{
@@ -55,9 +56,17 @@ public class OauthServicesImple implements OauthServices{
 
     @Override
     public String saveUser(User user) {
-        jdbcUserRepository.saveUser(user);
+        if (jdbcUserRepository.findById(user.getG_id()).isPresent()){
+            return user.getG_id();
+        } else {
+            jdbcUserRepository.saveUser(user);
+        }
+
+
         return user.getG_id();
     }
+
+
 
     public static JsonNode getGoogleUserInfo(String autorize_code) {
         final String RequestUrl = "https://www.googleapis.com/oauth2/v2/userinfo/?access_token="+autorize_code;
