@@ -42,8 +42,8 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public Question modifyQuestion(Question question) {
-        return null;
+    public List<Question> updateQuestion(int question_id, String variable, String updateContents) {
+        return jdbcQuestionRepository.updateQuestion(question_id, variable, updateContents);
     }
 
     @Override

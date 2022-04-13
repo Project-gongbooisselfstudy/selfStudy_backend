@@ -1,6 +1,7 @@
 package com.selfstudy.controller;
 
 import com.selfstudy.domain.Question;
+import com.selfstudy.domain.UpdateQuestion;
 import com.selfstudy.repository.JDBCQuestionRepository;
 import com.selfstudy.service.QuestionService;
 import com.selfstudy.service.QuestionServiceImpl;
@@ -41,10 +42,10 @@ public class QuestionController {
         // TODO 여기를 사용자가 직접 바꿀 수 있어야함
         qu.setQuestion_id(++count);
         qu.setWrong(0);
-        qu.setUser_id("user3");
-        qu.setContents("정답은?");
-        qu.setAnswer("4번");
-        qu.setClassification("test");
+        qu.setUser_id("ipad");
+        qu.setContents("desk");
+        qu.setAnswer("책상");
+        qu.setClassification("단어장");
         questionServiceIm.saveQuestion(qu);
         return qu;
     }
@@ -87,6 +88,27 @@ public class QuestionController {
     @RequestMapping(value = "question/randomPrev")
     public List<Question> randomQuestionPrev(){
         return questionServiceIm.randomQuestionPrev();
+    }
+
+
+    @RequestMapping(value="question/update",method = RequestMethod.POST)
+    public List<Question> updateQuestion(@RequestBody UpdateQuestion uq){
+        int question_id = uq.getQuestion_id();
+        String variable  = uq.getVariable();
+        String updateContents = "";
+
+        if (variable == "question") {
+             updateContents = uq.getUpdateContents();
+        }
+        else if(variable == "answer") {
+             updateContents = uq.getUpdateContents();
+        }
+
+//
+//        model.addAttribute("question_id", question_id);
+//        model.addAttribute("variable", variable);
+//        model.addAttribute("updateContents",updateContents);
+        return questionServiceIm.updateQuestion(question_id,variable,updateContents);
     }
 
 }

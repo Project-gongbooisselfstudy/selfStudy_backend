@@ -21,7 +21,7 @@ public interface QuestionService {
 
     List<Question> randomQuestionPrev();
 
-    Question modifyQuestion(Question question);
+    List<Question> updateQuestion(int question_id , String variable, String updateContents);
 
     String deleteQuestion(int question_id);
 
