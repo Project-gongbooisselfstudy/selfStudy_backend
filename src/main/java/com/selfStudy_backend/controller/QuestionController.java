@@ -96,17 +96,15 @@ public class QuestionController {
         String variable  = uq.getVariable();
         String updateContents = "";
 
-        if (variable == "question") {
+        if (variable.equals("question")) {
             updateContents = uq.getUpdateContents();
         }
-        else if(variable == "answer") {
+        else if(variable.equals("answer")) {
             updateContents = uq.getUpdateContents();
         }
-
-//
-//        model.addAttribute("question_id", question_id);
-//        model.addAttribute("variable", variable);
-//        model.addAttribute("updateContents",updateContents);
+        else if(variable.equals("classification")) {
+            updateContents = uq.getUpdateContents();
+        }
         return questionServiceIm.updateQuestion(question_id,variable,updateContents);
     }
 

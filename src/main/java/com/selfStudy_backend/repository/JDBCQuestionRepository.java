@@ -52,22 +52,31 @@ public class JDBCQuestionRepository implements QuestionRepository {
     public List<Question> updateQuestion(int question_id , String variable, String updateContents) {
 
         if (variable.equals("question")) {
-            System.out.println("REPOSITORY variable : " + variable);
             String sql = "UPDATE testQuestion SET question = ? WHERE question_id = ? ";
             Object [] params = {updateContents, question_id};
-//            List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),updateContents,question_id);
-            System.out.println(jdbcTemplate.update(sql, params));
-
-
+            jdbcTemplate.update(sql,params);
+            String sql2 = "select * from testQuestion where question_id = ?";
+            List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
+            return result;
         }
         else if (variable.equals("answer")) {
             String sql = "UPDATE testQuestion SET answer = ? WHERE question_id = ? ";
-            List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),updateContents,question_id);
+            Object [] params = {updateContents, question_id};
+            jdbcTemplate.update(sql,params);
+            String sql2 = "select * from testQuestion where question_id = ?";
+            List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
+            return result;
+        }
+        else if (variable.equals("classification")) {
+            String sql = "UPDATE testQuestion SET classification = ? WHERE question_id = ? ";
+            Object [] params = {updateContents, question_id};
+            jdbcTemplate.update(sql,params);
+            String sql2 = "select * from testQuestion where question_id = ?";
+            List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
             return result;
         }
         return null;
     }
-
 
     @Override
     public String deleteQuestion(int question_id){
@@ -112,12 +121,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     public void makeRandomList() {
         String sql = "select question_id from testQuestion";
-//        List<Integer> result = jdbcTemplate.query(sql,questionIDRowMapper());
-//        Collections.shuffle(result);
-//        randomList = result;
         randomList = jdbcTemplate.query(sql,questionIDRowMapper());
         Collections.shuffle(randomList);
-        System.out.println("randomList : "+randomList.toString());
     }
 
     private RowMapper<Question> randomRowMapper() {
