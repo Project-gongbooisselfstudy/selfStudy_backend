@@ -11,6 +11,8 @@ gradlew.bat
 #gradle/wrapper
 /src/main/resources/application.properties
 settings.gradle
+/src/test
+
 
 ### STS ###
 .apt_generated
