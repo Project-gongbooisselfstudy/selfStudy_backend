@@ -8,11 +8,16 @@ gradle/wrapper/gradle-wrapper.jar
 #내가 추가함#
 gradlew
 gradlew.bat
+<<<<<<< HEAD
 #gradle/wrapper
 /src/main/resources/application.properties
 settings.gradle
 /src/test
 
+=======
+gradle/wrapper
+/src/main/resources/application.properties
+>>>>>>> selfStudy/master
 
 ### STS ###
 .apt_generated
