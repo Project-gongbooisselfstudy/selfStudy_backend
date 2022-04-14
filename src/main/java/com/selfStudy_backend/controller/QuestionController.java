@@ -32,8 +32,8 @@ public class QuestionController {
 
 
     //    @RequestMapping(value = "question/create", produces = "application/json; charset=UTF-8")
-    @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
 
+    @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
     public Question save() {
         Question qu = new Question();
         int count =jdbcQuestionRepository.getQuestion_id();
