@@ -23,7 +23,7 @@ public class QuestionServiceImpl implements QuestionService {
         jdbcQuestionRepository.saveQuestion(question);
         return question.getQuestion_id();
     }
-    
+
     @Override
     public List<Question> findAllQuestion() {
         return jdbcQuestionRepository.findAll();
@@ -42,14 +42,25 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public Question modifyQuestion(Question question) {
-        return null;
+    public List<Question> updateQuestion(int question_id, String variable, String updateContents) {
+        return jdbcQuestionRepository.updateQuestion(question_id, variable, updateContents);
     }
 
     @Override
     public String deleteQuestion(int question_id) {
         return jdbcQuestionRepository.deleteQuestion(question_id);
     }
+
+    @Override
+    public List<Question> randomQuestionNext() {
+        return jdbcQuestionRepository.randomNext();
+    }
+
+    @Override
+    public List<Question> randomQuestionPrev() {
+        return jdbcQuestionRepository.randomPrev();
+    }
+
 
 
 
@@ -63,8 +74,8 @@ public class QuestionServiceImpl implements QuestionService {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        
-    }
+
+}
 
 
 

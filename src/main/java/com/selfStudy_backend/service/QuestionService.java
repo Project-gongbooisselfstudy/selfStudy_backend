@@ -16,7 +16,11 @@ public interface QuestionService {
 
     Optional<Question> findByQuestion(int question_id);
 
-    Question modifyQuestion(Question question);
+    List<Question> randomQuestionNext();
+
+    List<Question> randomQuestionPrev();
+
+    List<Question> updateQuestion(int question_id , String variable, String updateContents);
 
     String deleteQuestion(int question_id);
 

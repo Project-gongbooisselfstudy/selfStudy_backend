@@ -1,6 +1,7 @@
 package com.selfStudy_backend.controller;
 
 import com.selfStudy_backend.domain.Question;
+import com.selfStudy_backend.domain.UpdateQuestion;
 import com.selfStudy_backend.repository.JDBCQuestionRepository;
 import com.selfStudy_backend.service.QuestionServiceImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,10 +15,13 @@ import java.util.Optional;
 @RestController
 public class QuestionController {
 
-	private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private QuestionServiceImpl questionServiceIm;
     private Question question;
     private JDBCQuestionRepository jdbcQuestionRepository;
+
+
+
 
     public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository,  Question question) {
         this.jdbcTemplate = jdbcTemplate;
@@ -27,7 +31,9 @@ public class QuestionController {
     }
 
 
-    @RequestMapping(value = "question/create", produces = "application/json; charset=UTF-8")
+    //    @RequestMapping(value = "question/create", produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
+
     public Question save() {
         Question qu = new Question();
         int count =jdbcQuestionRepository.getQuestion_id();
@@ -35,10 +41,10 @@ public class QuestionController {
         // TODO 여기를 사용자가 직접 바꿀 수 있어야함
         qu.setQuestion_id(++count);
         qu.setWrong(0);
-        qu.setUser_id("user2");
-        qu.setContents("오늘 무슨요일이게?");
-        qu.setAnswer("Wednesday");
-        qu.setClassification("test");
+        qu.setUser_id("ipad");
+        qu.setContents("desk");
+        qu.setAnswer("책상");
+        qu.setClassification("단어장");
         questionServiceIm.saveQuestion(qu);
         return qu;
     }
@@ -73,5 +79,35 @@ public class QuestionController {
         return questionServiceIm.deleteQuestion(question_id);
     }
 
+    @RequestMapping(value = "question/randomNext")
+    public List<Question> randomQuestionNext(){
+        return questionServiceIm.randomQuestionNext();
+    }
+
+    @RequestMapping(value = "question/randomPrev")
+    public List<Question> randomQuestionPrev(){
+        return questionServiceIm.randomQuestionPrev();
+    }
+
+
+    @RequestMapping(value="question/update",method = RequestMethod.POST)
+    public List<Question> updateQuestion(@RequestBody UpdateQuestion uq){
+        int question_id = uq.getQuestion_id();
+        String variable  = uq.getVariable();
+        String updateContents = "";
+
+        if (variable == "question") {
+            updateContents = uq.getUpdateContents();
+        }
+        else if(variable == "answer") {
+            updateContents = uq.getUpdateContents();
+        }
+
+//
+//        model.addAttribute("question_id", question_id);
+//        model.addAttribute("variable", variable);
+//        model.addAttribute("updateContents",updateContents);
+        return questionServiceIm.updateQuestion(question_id,variable,updateContents);
+    }
 
 }

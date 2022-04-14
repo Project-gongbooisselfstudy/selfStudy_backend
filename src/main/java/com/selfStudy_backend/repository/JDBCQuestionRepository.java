@@ -11,13 +11,15 @@ import java.util.*;
 @Repository
 public class JDBCQuestionRepository implements QuestionRepository {
 
-    private List store = new ArrayList<>();
     private final JdbcTemplate jdbcTemplate;
+    private int idx = 0;
+    private List<Integer> randomList = new ArrayList<>();
 
     public JDBCQuestionRepository(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
 
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        makeRandomList();
+    }
 
     @Override
     public void saveQuestion(Question question) {
@@ -45,8 +47,26 @@ public class JDBCQuestionRepository implements QuestionRepository {
         return result.stream().findFirst();
     }
 
+
     @Override
-    public void modifyQuestion(Question question) {}
+    public List<Question> updateQuestion(int question_id , String variable, String updateContents) {
+
+        if (variable.equals("question")) {
+            System.out.println("REPOSITORY variable : " + variable);
+            String sql = "UPDATE testQuestion SET question = ? WHERE question_id = ? ";
+            Object [] params = {updateContents, question_id};
+//            List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),updateContents,question_id);
+            System.out.println(jdbcTemplate.update(sql, params));
+
+
+        }
+        else if (variable.equals("answer")) {
+            String sql = "UPDATE testQuestion SET answer = ? WHERE question_id = ? ";
+            List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),updateContents,question_id);
+            return result;
+        }
+        return null;
+    }
 
 
     @Override
@@ -72,6 +92,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
         };
     }
 
+
+    //controller에서 사용하는 메소드
     public int getQuestion_id(){
         String sql = "SELECT max(question_id) FROM testQuestion;";
         int count = jdbcTemplate.queryForObject(sql, Integer.class);
@@ -79,4 +101,59 @@ public class JDBCQuestionRepository implements QuestionRepository {
     }
 
 
+    private RowMapper<Integer> questionIDRowMapper() {
+        return (rs, rowNum) -> {
+            Question question = new Question();
+            question.setQuestion_id(rs.getInt("question_id"));
+            return question.getQuestion_id();
+        };
     }
+
+
+    public void makeRandomList() {
+        String sql = "select question_id from testQuestion";
+//        List<Integer> result = jdbcTemplate.query(sql,questionIDRowMapper());
+//        Collections.shuffle(result);
+//        randomList = result;
+        randomList = jdbcTemplate.query(sql,questionIDRowMapper());
+        Collections.shuffle(randomList);
+        System.out.println("randomList : "+randomList.toString());
+    }
+
+    private RowMapper<Question> randomRowMapper() {
+        return (rs, rowNum) -> {
+            Question qu = new Question();
+            qu.setContents(rs.getString("question"));
+            qu.setClassification(rs.getString("classification"));
+            qu.setAnswer(rs.getString("answer"));
+            return qu;
+        };
+    }
+
+    //TODO 더이상의 문제가 없는데 idx를 계속 늘리는 경우도 대비해야함.
+    @Override
+    public List<Question> randomNext() {
+        String sql = "select  question, classification, answer from testQuestion where question_id= ? ";
+        try {
+            List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
+            idx+=1 ;
+            return result;
+        }
+        catch (Exception e ) {
+            System.out.println("더이상의 문제가 없습니다");
+            return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx-1)); }
+    }
+
+    @Override
+    public List<Question> randomPrev() {
+        String sql = "select  question, classification, answer from testQuestion where question_id = ?";
+        try {
+            List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
+            idx-=1 ;
+            return result;
+        }
+        catch (Exception e ) {
+            System.out.println("더이상의 문제가 없습니다");
+            return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx+1)); }
+    }
+}
