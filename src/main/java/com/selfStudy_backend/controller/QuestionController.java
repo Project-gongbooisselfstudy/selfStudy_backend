@@ -21,9 +21,7 @@ public class QuestionController {
     private JDBCQuestionRepository jdbcQuestionRepository;
 
 
-
-
-    public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository,  Question question) {
+    public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository, Question question) {
         this.jdbcTemplate = jdbcTemplate;
         this.questionServiceIm = questionServiceIm;
         this.jdbcQuestionRepository = jdbcQuestionRepository;
@@ -36,7 +34,7 @@ public class QuestionController {
     @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
     public Question save() {
         Question qu = new Question();
-        int count =jdbcQuestionRepository.getQuestion_id();
+        int count = jdbcQuestionRepository.getQuestion_id();
 
         // TODO 여기를 사용자가 직접 바꿀 수 있어야함
         qu.setQuestion_id(++count);
@@ -51,61 +49,65 @@ public class QuestionController {
 
 
     //    TODO 지금은 question/list이지만 회원의 id를 value로 입력하면 문제 리스트 전체가 보이게 하는 방법은 어떨지
-    @RequestMapping(value="question/list",produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "question/list", produces = "application/json; charset=UTF-8")
     public List<Question> findAll() {
         return questionServiceIm.findAllQuestion();
 
     }
 
-    @RequestMapping(value="question/userQuestion")
-    public List<Question> findById(HttpServletRequest request , Model model){
+    @RequestMapping(value = "question/userQuestion")
+    public List<Question> findById(HttpServletRequest request, Model model) {
         String user_id = request.getParameter("userId");
         model.addAttribute("userId", user_id);
         return questionServiceIm.findById(user_id);
     }
 
-    @RequestMapping(value="question/findQuestion")
-    public Optional<Question> findByQuestion(HttpServletRequest request , Model model){
+    @RequestMapping(value = "question/findQuestion")
+    public Optional<Question> findByQuestion(HttpServletRequest request, Model model) {
         int question_id = Integer.parseInt(request.getParameter("question_id"));
         model.addAttribute("question_id", question_id);
         return questionServiceIm.findByQuestion(question_id);
     }
 
 
-    @RequestMapping(value= "question/delete")
-    public String deleteQuestion(HttpServletRequest request , Model model){
+    @RequestMapping(value = "question/delete")
+    public String deleteQuestion(HttpServletRequest request, Model model) {
         int question_id = Integer.parseInt(request.getParameter("question_id"));
         model.addAttribute("question_id", question_id);
         return questionServiceIm.deleteQuestion(question_id);
     }
 
     @RequestMapping(value = "question/randomNext")
-    public List<Question> randomQuestionNext(){
+    public List<Question> randomQuestionNext() {
         return questionServiceIm.randomQuestionNext();
     }
 
     @RequestMapping(value = "question/randomPrev")
-    public List<Question> randomQuestionPrev(){
+    public List<Question> randomQuestionPrev() {
         return questionServiceIm.randomQuestionPrev();
     }
 
 
-    @RequestMapping(value="question/update",method = RequestMethod.POST)
-    public List<Question> updateQuestion(@RequestBody UpdateQuestion uq){
+    @RequestMapping(value = "question/update", method = RequestMethod.POST)
+    public List<Question> updateQuestion(@RequestBody UpdateQuestion uq) {
         int question_id = uq.getQuestion_id();
-        String variable  = uq.getVariable();
+        String variable = uq.getVariable();
         String updateContents = "";
 
         if (variable.equals("question")) {
             updateContents = uq.getUpdateContents();
-        }
-        else if(variable.equals("answer")) {
+        } else if (variable.equals("answer")) {
+            updateContents = uq.getUpdateContents();
+        } else if (variable.equals("classification")) {
             updateContents = uq.getUpdateContents();
         }
-        else if(variable.equals("classification")) {
-            updateContents = uq.getUpdateContents();
-        }
-        return questionServiceIm.updateQuestion(question_id,variable,updateContents);
+        return questionServiceIm.updateQuestion(question_id, variable, updateContents);
+    }
+
+    //TODO 매핑벨류 이름 다시 정하고 함수 구현
+    @RequestMapping(value = "question/update", method = RequestMethod.POST)
+    public List<Question> validateAnswer(@RequestBody UpdateQuestion uq) {
+        return null;
     }
 
 }

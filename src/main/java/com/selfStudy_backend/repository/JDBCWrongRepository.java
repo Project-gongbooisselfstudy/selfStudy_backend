@@ -36,6 +36,10 @@ public class JDBCWrongRepository implements WrongRepository {
         return jdbcTemplate.query("select * from testWrong",wrongRowMapper());
     }
 
+    @Override
+    public void validateAnswer() {
+
+    }
 
 
     private RowMapper<Wrong> wrongRowMapper() {
@@ -48,11 +52,11 @@ public class JDBCWrongRepository implements WrongRepository {
         };
     }
 
-    public int auto_wrong_id(){
-        String sql = "SELECT max(wrong_id) FROM testWrong;";
-        int count = jdbcTemplate.queryForObject(sql, Integer.class);
-        return count;
-    }
+//    public int auto_wrong_id(){
+//        String sql = "SELECT max(wrong_id) FROM testWrong;";
+//        int count = jdbcTemplate.queryForObject(sql, Integer.class);
+//        return count;
+//    }
 
 
 }

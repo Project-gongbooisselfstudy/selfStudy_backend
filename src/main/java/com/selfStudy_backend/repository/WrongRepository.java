@@ -13,6 +13,7 @@ public interface WrongRepository {
     // 전제 오답문제 조회
     List<Wrong> findAll();
 
+    void validateAnswer();
 
 
 
