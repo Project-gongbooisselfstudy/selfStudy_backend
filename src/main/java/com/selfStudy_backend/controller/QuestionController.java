@@ -29,9 +29,9 @@ public class QuestionController {
     }
 
 
-    //    @RequestMapping(value = "question/create", produces = "application/json; charset=UTF-8")
+        @RequestMapping(value = "question/create", produces = "application/json; charset=UTF-8")
 
-    @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
+//    @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
     public Question save() {
         Question qu = new Question();
         int count = jdbcQuestionRepository.getQuestion_id();
@@ -39,9 +39,9 @@ public class QuestionController {
         // TODO 여기를 사용자가 직접 바꿀 수 있어야함
         qu.setQuestion_id(++count);
         qu.setWrong(0);
-        qu.setUser_id("ipad");
-        qu.setContents("desk");
-        qu.setAnswer("책상");
+        qu.setUser_id("new");
+        qu.setContents("spring");
+        qu.setAnswer("스프링");
         qu.setClassification("단어장");
         questionServiceIm.saveQuestion(qu);
         return qu;
@@ -64,21 +64,35 @@ public class QuestionController {
 
     @RequestMapping(value = "question/findQuestion")
     public Optional<Question> findByQuestion(HttpServletRequest request, Model model) {
-        int question_id = Integer.parseInt(request.getParameter("question_id"));
-        model.addAttribute("question_id", question_id);
+        int question_id = Integer.parseInt(request.getParameter("questionId"));
+        model.addAttribute("questionId", question_id);
         return questionServiceIm.findByQuestion(question_id);
     }
 
 
     @RequestMapping(value = "question/delete")
     public String deleteQuestion(HttpServletRequest request, Model model) {
-        int question_id = Integer.parseInt(request.getParameter("question_id"));
-        model.addAttribute("question_id", question_id);
+        int question_id = Integer.parseInt(request.getParameter("questionId"));
+        model.addAttribute("questionId", question_id);
         return questionServiceIm.deleteQuestion(question_id);
     }
 
-    @RequestMapping(value = "question/randomNext")
-    public List<Question> randomQuestionNext() {
+//    @RequestMapping(value = "question/randomNext")
+//    public List<Question> randomQuestionNext() {
+//        return questionServiceIm.randomQuestionNext();
+//    }
+
+    // 위에 randomNext의 문제를 보고 답을 answer로 보냄
+    @RequestMapping(value = "question/randomNext", method={RequestMethod.GET, RequestMethod.POST})
+    public List<Question> solveQuestion(HttpServletRequest request, Model model) {
+
+        if (request.getMethod().equals("GET")) {
+        String answer = request.getParameter("answer");
+        model.addAttribute("answer", answer);
+//        questionServiceIm.solve(answer);
+        return questionServiceIm.solve(answer);
+        }
+
         return questionServiceIm.randomQuestionNext();
     }
 
@@ -104,10 +118,6 @@ public class QuestionController {
         return questionServiceIm.updateQuestion(question_id, variable, updateContents);
     }
 
-    //TODO 매핑벨류 이름 다시 정하고 함수 구현
-    @RequestMapping(value = "question/update", method = RequestMethod.POST)
-    public List<Question> validateAnswer(@RequestBody UpdateQuestion uq) {
-        return null;
-    }
+
 
 }

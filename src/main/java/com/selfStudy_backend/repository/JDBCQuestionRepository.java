@@ -128,6 +128,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     private RowMapper<Question> randomRowMapper() {
         return (rs, rowNum) -> {
             Question qu = new Question();
+            qu.setQuestion_id(rs.getInt("question_id"));
             qu.setContents(rs.getString("question"));
             qu.setClassification(rs.getString("classification"));
             qu.setAnswer(rs.getString("answer"));
@@ -138,7 +139,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     //TODO 더이상의 문제가 없는데 idx를 계속 늘리는 경우도 대비해야함.
     @Override
     public List<Question> randomNext() {
-        String sql = "select  question, classification, answer from testQuestion where question_id= ? ";
+        String sql = "select question, classification, answer from testQuestion where question_id= ? ";
         try {
             List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
             idx+=1 ;
@@ -161,4 +162,15 @@ public class JDBCQuestionRepository implements QuestionRepository {
             System.out.println("더이상의 문제가 없습니다");
             return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx+1)); }
     }
+
+
+    public List<Question> updateWrong(int question_id) {
+        String sql = "UPDATE testQuestion SET wrong = ? WHERE question_id = ? ";
+        Object [] params = {1, question_id};
+        jdbcTemplate.update(sql,params);
+        String sql2 = "select * from testQuestion where question_id = ?";
+        List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
+        return result;
+    }
+
 }

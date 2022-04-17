@@ -52,8 +52,21 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> randomQuestionNext() {
-        return jdbcQuestionRepository.randomNext();
+    public List<Question> randomQuestionNext() { return jdbcQuestionRepository.randomNext();}
+
+    public List<Question> solve(String inputAnswer) {
+        List<Question> questionSet = randomQuestionNext();
+        String genuineAnswer = questionSet.get(0).getAnswer();
+        int question_id = questionSet.get(0).getQuestion_id();
+        System.out.println(genuineAnswer);
+        System.out.println(question_id);
+        boolean validate = validateAnswer(genuineAnswer,inputAnswer);
+        if (validate == false) {
+            System.out.println("오답입니다");
+            return jdbcQuestionRepository.updateWrong(question_id);
+        }
+        System.out.println("정답입니다");
+        return questionSet;
     }
 
     @Override
@@ -63,15 +76,26 @@ public class QuestionServiceImpl implements QuestionService {
 
 
 
+    private boolean validateAnswer(String genuineAnswer,String inputAnswer) {
+        if (genuineAnswer.equals(inputAnswer)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+
 
 //    private void validateDuplicateQuestion(Question question) {
 //        try {
 //            List<Question> tmp = jdbcQuestionRepository.findByQuestion(question.getContents());
-//
-//            if (tmp.size() != 0) {
-//                throw new IllegalStateException("이미 존재하는 문제입니다");
-//            }
-//        } catch (Exception e) {
+
+//        } catch (Exception e) {//
+////            if (tmp.size() != 0) {
+////                throw new IllegalStateException("이미 존재하는 문제입니다");
+////            }
 //            e.printStackTrace();
 //        }
 
