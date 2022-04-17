@@ -15,34 +15,39 @@ public class JDBCQuestionRepository implements QuestionRepository {
     private int idx = 0;
     private List<Integer> randomList = new ArrayList<>();
 
+    public void setIdx(int idx) {
+        this.idx = idx;
+    }
+
     public JDBCQuestionRepository(DataSource dataSource) {
 
         jdbcTemplate = new JdbcTemplate(dataSource);
         makeRandomList();
+        setIdx(0);
     }
 
     @Override
     public void saveQuestion(Question question) {
-        String sql = "INSERT INTO testQuestion(question_id, wrong, user_id , question, classification , answer) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO TESTDB.testQuestion(question_id, wrong, user_id , question, classification , answer) VALUES (?,?,?,?,?,?)";
         Object[] Params = {question.getQuestion_id(), question.getWrong(), question.getUser_id(), question.getContents(),question.getClassification(), question.getAnswer()};
         jdbcTemplate.update(sql,Params);
     }
 
     @Override
     public List<Question> findAll() {
-        return jdbcTemplate.query("select * from testQuestion",questionRowMapper());
+        return jdbcTemplate.query("select * from TESTDB.testQuestion",questionRowMapper());
     }
 
     @Override
     public List<Question> findById(String user_id) {
-        String sql = "select * from testQuestion where user_id = ?";
+        String sql = "select * from TESTDB.testQuestion where user_id = ?";
         List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),user_id);
         return result;
     }
 
     @Override
     public Optional<Question> findByQuestion(int question_id){
-        String sql = "select * from testQuestion where question_id = ?";
+        String sql = "select * from TESTDB.testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),question_id);
         return result.stream().findFirst();
     }
@@ -52,26 +57,26 @@ public class JDBCQuestionRepository implements QuestionRepository {
     public List<Question> updateQuestion(int question_id , String variable, String updateContents) {
 
         if (variable.equals("question")) {
-            String sql = "UPDATE testQuestion SET question = ? WHERE question_id = ? ";
+            String sql = "UPDATE TESTDB.testQuestion SET question = ? WHERE question_id = ? ";
             Object [] params = {updateContents, question_id};
             jdbcTemplate.update(sql,params);
-            String sql2 = "select * from testQuestion where question_id = ?";
+            String sql2 = "select * from TESTDB.testQuestion where question_id = ?";
             List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
             return result;
         }
         else if (variable.equals("answer")) {
-            String sql = "UPDATE testQuestion SET answer = ? WHERE question_id = ? ";
+            String sql = "UPDATE TESTDB.testQuestion SET answer = ? WHERE question_id = ? ";
             Object [] params = {updateContents, question_id};
             jdbcTemplate.update(sql,params);
-            String sql2 = "select * from testQuestion where question_id = ?";
+            String sql2 = "select * from TESTDB.testQuestion where question_id = ?";
             List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
             return result;
         }
         else if (variable.equals("classification")) {
-            String sql = "UPDATE testQuestion SET classification = ? WHERE question_id = ? ";
+            String sql = "UPDATE TESTDB.testQuestion SET classification = ? WHERE question_id = ? ";
             Object [] params = {updateContents, question_id};
             jdbcTemplate.update(sql,params);
-            String sql2 = "select * from testQuestion where question_id = ?";
+            String sql2 = "select * from TESTDB.testQuestion where question_id = ?";
             List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
             return result;
         }
@@ -80,7 +85,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     @Override
     public String deleteQuestion(int question_id){
-        String sql = "delete from testQuestion where question_id = ?";
+        String sql = "delete from TESTDB.testQuestion where question_id = ?";
         jdbcTemplate.update(sql,question_id);
         return "해당 문제가 삭제되었습니다";
     }
@@ -104,7 +109,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     //controller에서 사용하는 메소드
     public int getQuestion_id(){
-        String sql = "SELECT max(question_id) FROM testQuestion;";
+        String sql = "SELECT max(question_id) FROM TESTDB.testQuestion;";
         int count = jdbcTemplate.queryForObject(sql, Integer.class);
         return count;
     }
@@ -120,7 +125,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
 
     public void makeRandomList() {
-        String sql = "select question_id from testQuestion";
+        String sql = "select question_id from TESTDB.testQuestion";
         randomList = jdbcTemplate.query(sql,questionIDRowMapper());
         Collections.shuffle(randomList);
     }
@@ -139,20 +144,21 @@ public class JDBCQuestionRepository implements QuestionRepository {
     //TODO 더이상의 문제가 없는데 idx를 계속 늘리는 경우도 대비해야함.
     @Override
     public List<Question> randomNext() {
-        String sql = "select question, classification, answer from testQuestion where question_id= ? ";
+        String sql = "select question, classification, answer from TESTDB.testQuestion where question_id= ? ";
         try {
             List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
             idx+=1 ;
             return result;
         }
         catch (Exception e ) {
+            System.out.println(e.getMessage());
             System.out.println("더이상의 문제가 없습니다");
             return  jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx-1)); }
     }
 
     @Override
     public List<Question> randomPrev() {
-        String sql = "select  question, classification, answer from testQuestion where question_id = ?";
+        String sql = "select  question, classification, answer from TESTDB.testQuestion where question_id = ?";
         try {
             List<Question> result = jdbcTemplate.query(sql,randomRowMapper(),randomList.get(idx));
             idx-=1 ;
@@ -165,10 +171,10 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
 
     public List<Question> updateWrong(int question_id) {
-        String sql = "UPDATE testQuestion SET wrong = ? WHERE question_id = ? ";
+        String sql = "UPDATE TESTDB.testQuestion SET wrong = ? WHERE question_id = ? ";
         Object [] params = {1, question_id};
         jdbcTemplate.update(sql,params);
-        String sql2 = "select * from testQuestion where question_id = ?";
+        String sql2 = "select * from TESTDB.testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
         return result;
     }
