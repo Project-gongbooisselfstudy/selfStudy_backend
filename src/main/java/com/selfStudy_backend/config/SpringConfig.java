@@ -1,4 +1,4 @@
-package com.selfStudy_backend;
+package com.selfStudy_backend.config;
 
 
 import com.selfStudy_backend.domain.Question;
