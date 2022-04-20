@@ -25,21 +25,9 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findAllQuestion() {
-        return jdbcQuestionRepository.findAll();
-    }
-
-    @Override
-    public List<Question> findById(String user_id){
+    public List<Question> findAllQuestion(String user_id) {
         return jdbcQuestionRepository.findById(user_id);
-
     }
-
-    @Override
-    public Optional<Question> findByQuestion(int question_id){
-        return jdbcQuestionRepository.findByQuestion(question_id);
-    }
-
 
     @Override
     public List<Question> updateQuestion(int question_id, String variable, String updateContents) {
@@ -50,56 +38,39 @@ public class QuestionServiceImpl implements QuestionService {
     public String deleteQuestion(int question_id) {
         return jdbcQuestionRepository.deleteQuestion(question_id);
     }
+//
+//    @Override
+//    public List<Question> randomQuestionNext() { return jdbcQuestionRepository.randomNext();}
+//
+//
+//
+//    @Override
+//    public List<Question> randomQuestionPrev() {
+//        return jdbcQuestionRepository.randomPrev();
+//    }
 
-    @Override
-    public List<Question> randomQuestionNext() { return jdbcQuestionRepository.randomNext();}
-
-    public List<Question> solve(String inputAnswer) {
-        List<Question> questionSet = randomQuestionNext();
-        String genuineAnswer = questionSet.get(0).getAnswer();
-        int question_id = questionSet.get(0).getQuestion_id();
-        System.out.println(genuineAnswer);
-        System.out.println(question_id);
+    public String solve(List<Question> questionList,String inputAnswer) {
+        String genuineAnswer = questionList.get(0).getAnswer();
+        System.out.println("genuineAnswer = " + genuineAnswer);
+        System.out.println("inputAnswer = " + inputAnswer);
+        int question_id = questionList.get(0).getQuestion_id();
         boolean validate = validateAnswer(genuineAnswer,inputAnswer);
+        String user_id = questionList.get(0).getUser_id();
+        System.out.println("user_id = " + user_id);
         if (validate == false) {
-            System.out.println("오답입니다");
-            return jdbcQuestionRepository.updateWrong(question_id);
+            jdbcQuestionRepository.updateWrong(question_id,user_id);
+            return "오답입니다";
         }
-        System.out.println("정답입니다");
-        return questionSet;
-    }
+        return "정답입니다";
 
-    @Override
-    public List<Question> randomQuestionPrev() {
-        return jdbcQuestionRepository.randomPrev();
     }
-
 
 
     private boolean validateAnswer(String genuineAnswer,String inputAnswer) {
-        if (genuineAnswer.equals(inputAnswer)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+        if (genuineAnswer.equals(inputAnswer)) {return true;}
+        else {return false;} }}
 
 
-
-
-//    private void validateDuplicateQuestion(Question question) {
-//        try {
-//            List<Question> tmp = jdbcQuestionRepository.findByQuestion(question.getContents());
-
-//        } catch (Exception e) {//
-////            if (tmp.size() != 0) {
-////                throw new IllegalStateException("이미 존재하는 문제입니다");
-////            }
-//            e.printStackTrace();
-//        }
-
-}
 
 
 

@@ -19,7 +19,7 @@ public class QuestionController {
     private QuestionServiceImpl questionServiceIm;
     private Question question;
     private JDBCQuestionRepository jdbcQuestionRepository;
-
+    private List<Question> questionSet;
 
     public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository, Question question) {
         this.jdbcTemplate = jdbcTemplate;
@@ -29,7 +29,7 @@ public class QuestionController {
     }
 
 
-        @RequestMapping(value = "question/create", produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "/create", produces = "application/json; charset=UTF-8")
 
 //    @RequestMapping(value = "MakeProblem", produces = "application/json; charset=UTF-8")
     public Question save() {
@@ -48,26 +48,26 @@ public class QuestionController {
     }
 
 
-    //    TODO 지금은 question/list이지만 회원의 id를 value로 입력하면 문제 리스트 전체가 보이게 하는 방법은 어떨지
-    @RequestMapping(value = "question/list", produces = "application/json; charset=UTF-8")
-    public List<Question> findAll() {
-        return questionServiceIm.findAllQuestion();
+//    //    TODO 지금은 question/list이지만 회원의 id를 value로 입력하면 문제 리스트 전체가 보이게 하는 방법은 어떨지
+//    @RequestMapping(value = "question/list", produces = "application/json; charset=UTF-8")
+//    public List<Question> findAll() {
+//        return questionServiceIm.findAllQuestion();
+//
+//    }
 
-    }
+//    @RequestMapping(value = "question/userQuestion")
+//    public List<Question> findById(HttpServletRequest request, Model model) {
+//        String user_id = request.getParameter("userId");
+//        model.addAttribute("userId", user_id);
+//        return questionServiceIm.findById(user_id);
+//    }
 
-    @RequestMapping(value = "question/userQuestion")
-    public List<Question> findById(HttpServletRequest request, Model model) {
-        String user_id = request.getParameter("userId");
-        model.addAttribute("userId", user_id);
-        return questionServiceIm.findById(user_id);
-    }
-
-    @RequestMapping(value = "question/findQuestion")
-    public Optional<Question> findByQuestion(HttpServletRequest request, Model model) {
-        int question_id = Integer.parseInt(request.getParameter("questionId"));
-        model.addAttribute("questionId", question_id);
-        return questionServiceIm.findByQuestion(question_id);
-    }
+//    @RequestMapping(value = "question/findQuestion")
+//    public Optional<Question> findByQuestion(HttpServletRequest request, Model model) {
+//        int question_id = Integer.parseInt(request.getParameter("questionId"));
+//        model.addAttribute("questionId", question_id);
+//        return questionServiceIm.findByQuestion(question_id);
+//    }
 
 
     @RequestMapping(value = "question/delete")
@@ -83,23 +83,23 @@ public class QuestionController {
 //    }
 
     // 위에 randomNext의 문제를 보고 답을 answer로 보냄
-    @RequestMapping(value = "question/randomNext", method={RequestMethod.GET, RequestMethod.POST})
-    public List<Question> solveQuestion(HttpServletRequest request, Model model) {
+//    @RequestMapping(value = "question/randomNext", method={RequestMethod.GET, RequestMethod.POST})
+//    public List<Question> solveQuestion(HttpServletRequest request, Model model) {
+//
+//        if (request.getMethod().equals("GET")) {
+//            String answer = request.getParameter("answer");
+//            model.addAttribute("answer", answer);
+////        questionServiceIm.solve(answer);
+//            return questionServiceIm.solve(answer);
+//        }
+//
+//        return questionServiceIm.randomQuestionNext();
+//    }
 
-        if (request.getMethod().equals("GET")) {
-        String answer = request.getParameter("answer");
-        model.addAttribute("answer", answer);
-//        questionServiceIm.solve(answer);
-        return questionServiceIm.solve(answer);
-        }
-
-        return questionServiceIm.randomQuestionNext();
-    }
-
-    @RequestMapping(value = "question/randomPrev")
-    public List<Question> randomQuestionPrev() {
-        return questionServiceIm.randomQuestionPrev();
-    }
+//    @RequestMapping(value = "question/randomPrev")
+//    public List<Question> randomQuestionPrev() {
+//        return questionServiceIm.randomQuestionPrev();
+//    }
 
 
     @RequestMapping(value = "question/update", method = RequestMethod.POST)
@@ -119,5 +119,17 @@ public class QuestionController {
     }
 
 
+    @RequestMapping(value="load")
+    public List<Question> loadQuestion() {
+        questionSet =  jdbcQuestionRepository.loadQuestion();
+        return questionSet;
+    }
+
+    @RequestMapping(value = "solve", method={RequestMethod.GET})
+    public String solveQuestion(HttpServletRequest request, Model model) {
+        String answer = request.getParameter("answer");
+        model.addAttribute("answer", answer);
+        return questionServiceIm.solve(questionSet, answer);
+        }
 
 }
