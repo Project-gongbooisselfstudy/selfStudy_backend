@@ -38,16 +38,6 @@ public class QuestionServiceImpl implements QuestionService {
     public String deleteQuestion(int question_id) {
         return jdbcQuestionRepository.deleteQuestion(question_id);
     }
-//
-//    @Override
-//    public List<Question> randomQuestionNext() { return jdbcQuestionRepository.randomNext();}
-//
-//
-//
-//    @Override
-//    public List<Question> randomQuestionPrev() {
-//        return jdbcQuestionRepository.randomPrev();
-//    }
 
     public String solve(List<Question> questionList,String inputAnswer) {
         String genuineAnswer = questionList.get(0).getAnswer();

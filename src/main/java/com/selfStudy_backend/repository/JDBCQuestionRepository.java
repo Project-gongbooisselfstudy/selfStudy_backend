@@ -91,7 +91,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
             List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomList.get(idx));
             return result;}
     }
-    // TODO Wrong DB에도 저장해야함.
+
     public List<Question> updateWrong(int question_id,String user_id) {
         String sql = "UPDATE TESTDB.testQuestion SET wrong = ? WHERE question_id = ? ";
         Object [] params = {1, question_id};
@@ -103,39 +103,6 @@ public class JDBCQuestionRepository implements QuestionRepository {
         jdbcTemplate.update(sql3,Params);
         return result;
     }
-
-
-
-
-//    @Override
-//    public List<Question> randomNext() {
-//        String sql = "select question, classification, answer from TESTDB.testQuestion where question_id= ? ";
-//        try {
-//            List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),randomList.get(idx));
-//            idx+=1 ;
-//            System.out.println("NEXT에서 idx 값은? " + Integer.toString(idx));
-//            return result;
-//        }
-//        catch (Exception e ) {
-//            System.out.println("더이상의 문제가 없습니다");
-//            return  jdbcTemplate.query(sql,randomMapper(),randomList.get(idx-1)); }
-//    }
-//
-//    @Override
-//    public List<Question> randomPrev() {
-//        String sql = "select  question, classification, answer from TESTDB.testQuestion where question_id = ?";
-//        try {
-//            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomList.get(idx));
-//            idx-=1 ;
-//            System.out.println("PREV에서 idx 값은? " + Integer.toString(idx));
-//            return result;
-//        }
-//        catch (Exception e ) {
-//            System.out.println("더이상의 문제가 없습니다");
-//            return  jdbcTemplate.query(sql,randomMapper(),randomList.get(idx+1)); }
-//    }
-
-
 
 
     private RowMapper<Question> questionRowMapper() {
@@ -152,11 +119,19 @@ public class JDBCQuestionRepository implements QuestionRepository {
     }
 
 
+    private void makeRandomList() {
+        String sql = "select question_id from testQuestion";
+        randomList = jdbcTemplate.query(sql,questionIDMapper());
+        Collections.shuffle(randomList);
+    }
+
     //controller에서 사용하는 메소드
     public int getQuestion_id(){
+        try {
         String sql = "SELECT max(question_id) FROM testQuestion;";
         int count = jdbcTemplate.queryForObject(sql, Integer.class);
-        return count;
+        return count; }
+        catch (Exception e) { int count = 1 ; return count;}
     }
 
     private int getWrong_id() {
@@ -172,12 +147,6 @@ public class JDBCQuestionRepository implements QuestionRepository {
             question.setQuestion_id(rs.getInt("question_id"));
             return question.getQuestion_id();
         };
-    }
-
-    private void makeRandomList() {
-        String sql = "select question_id from testQuestion";
-        randomList = jdbcTemplate.query(sql,questionIDMapper());
-        Collections.shuffle(randomList);
     }
 
     private RowMapper<Question> randomMapper() {
