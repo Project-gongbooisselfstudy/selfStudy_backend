@@ -11,11 +11,12 @@ cache:
        - '$HOME/.m2/repository'
        - '$HOME/.gradle'
 
+before_install:
+  - chmod +x gradlew
+
+
 script: "./gradlew clean build"
 
-
-before_install:
-    - chmod +x gradlew
 
 before_deploy:
   - zip -r selfstudy-bucket-webservice *
@@ -39,4 +40,5 @@ notifications:
   email:
     recipients:
       - jjimini98@naver.com
+      - dinamic1016@naver.com
 
