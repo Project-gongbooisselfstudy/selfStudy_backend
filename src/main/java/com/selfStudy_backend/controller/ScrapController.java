@@ -1,13 +1,13 @@
 package com.selfStudy_backend.controller;
 
 import com.selfStudy_backend.domain.Scrap;
-import com.selfStudy_backend.domain.User;
 import com.selfStudy_backend.repository.JDBCScrapRepository;
-import com.selfStudy_backend.repository.UserRepository;
 import com.selfStudy_backend.service.ScrapServiceImple;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -42,7 +42,21 @@ public class ScrapController {
 
         scrapServiceImple.saveScrap(scr);
         return scr;
+    }
 
+    @RequestMapping(value = "scrap/list", produces = "application/json; charset=UTF-8")
+    public List<Scrap> findById(HttpServletRequest request, Model model){
+        String userId = request.getParameter("userId");
+        model.addAttribute("userId", userId);
+        return scrapServiceImple.findById(userId);
+    }
 
+    @RequestMapping(value = "scrap/delete")
+    public String deleteScrap(HttpServletRequest request, Model model){
+        String userId = request.getParameter("userId");
+        int questionId = Integer.parseInt(request.getParameter("questionId"));
+        model.addAttribute("userId", userId);
+        model.addAttribute("questionId", questionId);
+        return scrapServiceImple.deleteScrap(userId, questionId);
     }
 }

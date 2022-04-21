@@ -13,5 +13,5 @@ public interface ScrapRepository {
     List<Scrap> findById(String user_id);
 
     //스크랩 삭제
-
+    String deleteScrap(String user_id, int question_id);
 }

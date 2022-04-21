@@ -29,9 +29,18 @@ public class JDBCScrapRepository implements ScrapRepository{
     //id별 스크랩 조회
     @Override
     public List<Scrap> findById(String user_id) {
-        return null;
+        String sql = "select * from Scrap where user_id = ?";
+        List<Scrap> result = jdbcTemplate.query(sql, scrapRowMapper(), user_id);
+        return result;
     }
 
+    //스크랩 삭제
+    @Override
+    public String deleteScrap(String user_id, int question_id){
+        String sql = "delete from Scrap where user_id = ? and question_id = ?";
+        jdbcTemplate.update(sql,user_id, question_id);
+        return "스크랩 취소";
+    }
     //mapper
     private RowMapper<Scrap> scrapRowMapper() {
         return (rs, rowNum) -> {

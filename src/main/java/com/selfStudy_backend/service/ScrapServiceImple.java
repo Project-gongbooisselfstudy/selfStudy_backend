@@ -23,6 +23,11 @@ public class ScrapServiceImple implements ScrapService{
 
     @Override
     public List<Scrap> findById(String user_id) {
-        return null;
+        return jdbcScrapRepository.findById(user_id);
+    }
+
+    @Override
+    public String deleteScrap(String user_id, int question_id){
+        return jdbcScrapRepository.deleteScrap(user_id, question_id);
     }
 }
