@@ -1,12 +1,10 @@
 HELP.md
-.gradle
 build/
-gradle/wrapper/gradle-wrapper.jar
+.gradle
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 #내가 추가함#
-gradlew
 gradlew.bat
 <<<<<<< HEAD
 #gradle/wrapper
