@@ -74,6 +74,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
     public String deleteQuestion(int question_id){
         String sql = "delete from testQuestion where question_id = ?";
         jdbcTemplate.update(sql,question_id);
+        System.out.println("다시 랜덤으로 리스트를 생성합니다");
+        makeRandomList();
         return "해당 문제가 삭제되었습니다";
     }
 
@@ -99,7 +101,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
         String sql2 = "select * from TESTDB.testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
         String sql3 = "INSERT INTO testWrong(wrong_id,question_id,user_id) VALUES (?,?,?)";
-        Object[] Params = {getWrong_id() ,question_id, user_id};
+        int count = getWrong_id();
+        Object[] Params = {++count ,question_id, user_id};
         jdbcTemplate.update(sql3,Params);
         return result;
     }
@@ -119,7 +122,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     }
 
 
-    private void makeRandomList() {
+    public void makeRandomList() {
         String sql = "select question_id from testQuestion";
         randomList = jdbcTemplate.query(sql,questionIDMapper());
         Collections.shuffle(randomList);
