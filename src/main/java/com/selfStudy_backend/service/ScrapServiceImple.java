@@ -17,9 +17,13 @@ public class ScrapServiceImple implements ScrapService{
     }
 
     @Override
-    public int saveScrap(Scrap scrap) {
-        jdbcScrapRepository.saveScrap((scrap));
-        return scrap.getQuestion_id();
+    public String saveScrap(Scrap scrap) {
+        if (jdbcScrapRepository.findByUserIdAndQuestionId(scrap.getUser_id(), scrap.getQuestion_id()).isPresent()){
+            return "이미 스크랩되었습니다";
+        } else {
+            jdbcScrapRepository.saveScrap(scrap);
+        }
+        return scrap.getUser_id();
     }
 
     @Override

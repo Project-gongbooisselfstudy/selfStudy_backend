@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JDBCScrapRepository implements ScrapRepository{
@@ -34,6 +35,12 @@ public class JDBCScrapRepository implements ScrapRepository{
         return result;
     }
 
+    @Override
+    public Optional<Scrap> findByUserIdAndQuestionId(String user_id, int question_id){
+        String sql = "select * from Scrap where user_id = ? and question_id = ?";
+        List<Scrap> result = jdbcTemplate.query(sql, scrapRowMapper(), user_id, question_id);
+        return result.stream().findAny();
+    }
     //스크랩 삭제
     @Override
     public String deleteScrap(String user_id, int question_id){

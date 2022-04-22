@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ScrapService {
     //스크랩 저장
-    int saveScrap(Scrap scrap);
+    String saveScrap(Scrap scrap);
     //아이디별 스크랩 조회
     List<Question> findById(String user_id);
 
