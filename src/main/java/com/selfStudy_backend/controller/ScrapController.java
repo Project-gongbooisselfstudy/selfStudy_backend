@@ -1,5 +1,6 @@
 package com.selfStudy_backend.controller;
 
+import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.domain.Scrap;
 import com.selfStudy_backend.repository.JDBCScrapRepository;
 import com.selfStudy_backend.service.ScrapServiceImple;
@@ -45,7 +46,7 @@ public class ScrapController {
     }
 
     @RequestMapping(value = "scrap/list", produces = "application/json; charset=UTF-8")
-    public List<Scrap> findById(HttpServletRequest request, Model model){
+    public List<Question> findById(HttpServletRequest request, Model model){
         String userId = request.getParameter("userId");
         model.addAttribute("userId", userId);
         return scrapServiceImple.findById(userId);
