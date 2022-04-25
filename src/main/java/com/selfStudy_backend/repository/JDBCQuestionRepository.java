@@ -42,29 +42,31 @@ public class JDBCQuestionRepository implements QuestionRepository {
     @Override
     public List<Question> updateQuestion(int question_id , String variable, String updateContents) {
 
-        if (variable.equals("question")) {
-            String sql = "UPDATE testQuestion SET question = ? WHERE question_id = ? ";
-            Object [] params = {updateContents, question_id};
-            jdbcTemplate.update(sql,params);
-            String sql2 = "select * from testQuestion where question_id = ?";
-            List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
-            return result;
-        }
-        else if (variable.equals("answer")) {
-            String sql = "UPDATE testQuestion SET answer = ? WHERE question_id = ? ";
-            Object [] params = {updateContents, question_id};
-            jdbcTemplate.update(sql,params);
-            String sql2 = "select * from testQuestion where question_id = ?";
-            List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
-            return result;
-        }
-        else if (variable.equals("classification")) {
-            String sql = "UPDATE testQuestion SET classification = ? WHERE question_id = ? ";
-            Object [] params = {updateContents, question_id};
-            jdbcTemplate.update(sql,params);
-            String sql2 = "select * from testQuestion where question_id = ?";
-            List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
-            return result;
+        switch (variable) {
+            case "question": {
+                String sql = "UPDATE testQuestion SET question = ? WHERE question_id = ? ";
+                Object[] params = {updateContents, question_id};
+                jdbcTemplate.update(sql, params);
+                String sql2 = "select * from testQuestion where question_id = ?";
+                List<Question> result = jdbcTemplate.query(sql2, questionRowMapper(), question_id);
+                return result;
+            }
+            case "answer": {
+                String sql = "UPDATE testQuestion SET answer = ? WHERE question_id = ? ";
+                Object[] params = {updateContents, question_id};
+                jdbcTemplate.update(sql, params);
+                String sql2 = "select * from testQuestion where question_id = ?";
+                List<Question> result = jdbcTemplate.query(sql2, questionRowMapper(), question_id);
+                return result;
+            }
+            case "classification": {
+                String sql = "UPDATE testQuestion SET classification = ? WHERE question_id = ? ";
+                Object[] params = {updateContents, question_id};
+                jdbcTemplate.update(sql, params);
+                String sql2 = "select * from testQuestion where question_id = ?";
+                List<Question> result = jdbcTemplate.query(sql2, questionRowMapper(), question_id);
+                return result;
+            }
         }
         return null;
     }
