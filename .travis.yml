@@ -50,6 +50,6 @@ deploy:
 notifications:
   email:
     recipients:
-      - jjimini98@naver.com
-      - dinamic1016@naver.com
+      - "jjimini98@naver.com"
+      - "dinamic1016@naver.com"
 
