@@ -7,14 +7,14 @@ import java.util.List;
 
 public interface WrongRepository {
 
-    // 오답인 문제만 저장
-    void saveWrong(Question question);
+    //오답문제 조회 id 별로
+    List<Wrong> findAll(String user_id);
 
-    // 전제 오답문제 조회
-    List<Wrong> findAll();
+    //오답문제 로딩
+    List<Question> loadWrong();
 
-    void validateAnswer();
-
-
+//    오답문제 풀기
+//    List<Wrong> updateWrong();
+//
 
 }
