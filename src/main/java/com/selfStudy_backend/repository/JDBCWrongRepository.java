@@ -28,14 +28,14 @@ public class JDBCWrongRepository implements WrongRepository {
     public List<Question> findAll(String user_id) {
         String sql = "select * from testQuestion where user_id = ? and wrong = 1";
         List<Question> result = jdbcTemplate.query(sql, questionMapper(), user_id);
-        log.debug("userID에 해당하는 오답문제 전체 조회");
+        log.info( user_id + "의 오답문제 전체 조회");
         return result;
     }
 
     // TODO id 별로 나눠서 조회할 수 있도록 변경해야함
     public List<Question> loadWrong() {
         String sql = "select q.question , q.answer , q.classification from testQuestion as q join testWrong as w on q.question_id = w.question_id where w.wrong_id=? ";
-        log.debug("Random List " + randomList);
+        log.info("Wrong Random List " + randomList);
         if (idx < randomList.size()) {
             List<Question> result = jdbcTemplate.query(sql, randomMapper(), randomList.get(idx));
             idx += 1;
@@ -53,7 +53,7 @@ public class JDBCWrongRepository implements WrongRepository {
         String sql = "UPDATE testQuestion SET wrong = ? WHERE question_id = ? ";
         Object [] params = {0, question_id}; // 정답이므로 0으로 다시 변경
         jdbcTemplate.update(sql,params);
-        log.debug("wrong의 값을 1로 업데이트");
+        log.info("wrong의 값을 1로 업데이트");
         String sql2 = "select * from testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionMapper(),question_id);
         String sql3 = "delete from testWrong where wrong_id = ?"; // wrong 테이블에서 값 제거
