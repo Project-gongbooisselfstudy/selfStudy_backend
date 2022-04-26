@@ -7,14 +7,13 @@ import java.util.List;
 
 public interface WrongRepository {
 
-    //오답문제 조회 id 별로
+    // userID 별로 오답문제 전체 조회
     List<Question> findAll(String user_id);
 
-    //오답문제 로딩
+    // 틀린문제 랜덤으로 하나씩 조회
     List<Question> loadWrong();
 
-//    오답문제 풀기
-//    List<Wrong> updateWrong();
-//
+    // 틀린문제 풀어보고 맞은 경우 테이블에서 삭제
+    void updateWrong(int question_id);
 
 }
