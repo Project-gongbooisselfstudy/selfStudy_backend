@@ -2,26 +2,23 @@ package com.selfStudy_backend.repository;
 
 import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.domain.Wrong;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Repository
 public class JDBCWrongRepository implements WrongRepository {
 
-    private List store = new ArrayList<>();
     private final JdbcTemplate jdbcTemplate;
     private int idx = 0;
     private List<Integer> randomList;
 
-
     public JDBCWrongRepository(DataSource dataSource) {
-
         jdbcTemplate = new JdbcTemplate(dataSource);
         makeRandomList();
     }
@@ -31,13 +28,14 @@ public class JDBCWrongRepository implements WrongRepository {
     public List<Question> findAll(String user_id) {
         String sql = "select * from testQuestion where user_id = ? and wrong = 1";
         List<Question> result = jdbcTemplate.query(sql, questionMapper(), user_id);
+        log.debug("userID에 해당하는 오답문제 전체 조회");
         return result;
     }
 
     // TODO id 별로 나눠서 조회할 수 있도록 변경해야함
     public List<Question> loadWrong() {
         String sql = "select q.question , q.answer , q.classification from testQuestion as q join testWrong as w on q.question_id = w.question_id where w.wrong_id=? ";
-        System.out.println("Random List " + randomList);
+        log.debug("Random List " + randomList);
         if (idx < randomList.size()) {
             List<Question> result = jdbcTemplate.query(sql, randomMapper(), randomList.get(idx));
             idx += 1;
@@ -55,11 +53,12 @@ public class JDBCWrongRepository implements WrongRepository {
         String sql = "UPDATE testQuestion SET wrong = ? WHERE question_id = ? ";
         Object [] params = {0, question_id}; // 정답이므로 0으로 다시 변경
         jdbcTemplate.update(sql,params);
+        log.debug("wrong의 값을 1로 업데이트");
         String sql2 = "select * from testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionMapper(),question_id);
         String sql3 = "delete from testWrong where wrong_id = ?"; // wrong 테이블에서 값 제거
         jdbcTemplate.update(sql3,question_id);
-        System.out.println("정답이므로 wrongDB에서 문제 삭제");
+        log.info("정답 :: testWrongDB에서 삭제");
     }
 
 
@@ -95,7 +94,6 @@ public class JDBCWrongRepository implements WrongRepository {
         return (rs, rowNum) -> {
             Question qu = new Question();
             qu.setQuestion_id(randomList.get(idx));
-//            qu.setUser_id(rs.getString("user_id"));
             qu.setContents(rs.getString("question"));
             qu.setClassification(rs.getString("classification"));
             qu.setAnswer(rs.getString("answer"));

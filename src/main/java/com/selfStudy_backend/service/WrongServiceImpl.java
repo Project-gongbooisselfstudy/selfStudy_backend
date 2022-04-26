@@ -3,12 +3,14 @@ package com.selfStudy_backend.service;
 import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.domain.Wrong;
 import com.selfStudy_backend.repository.JDBCWrongRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
-public class WrongServiceImpl {
+public class WrongServiceImpl implements WrongService{
 
     private final JDBCWrongRepository jdbcWrongRepository;
 
@@ -20,14 +22,12 @@ public class WrongServiceImpl {
         return jdbcWrongRepository.findAll(user_id);
     }
 
-
     public String solve(List<Question> questionList,String inputAnswer) {
         String genuineAnswer = questionList.get(0).getAnswer();
-        System.out.println("genuineAnswer = " + genuineAnswer);
-        System.out.println("inputAnswer = " + inputAnswer);
+        log.debug("genuineAnswer = " + genuineAnswer);
+        log.debug("inputAnswer = " + inputAnswer);
         int question_id = questionList.get(0).getQuestion_id();
         boolean validate = validateAnswer(genuineAnswer,inputAnswer);
-//        String user_id = questionList.get(0).getUser_id();
 
         if (validate == true) {
             jdbcWrongRepository.updateWrong(question_id);
