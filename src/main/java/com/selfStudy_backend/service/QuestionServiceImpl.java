@@ -2,11 +2,11 @@ package com.selfStudy_backend.service;
 
 import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.repository.JDBCQuestionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
@@ -18,8 +18,8 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
+    // TODO 문제를 중복 입력에 대한 검증과정이 없는 상태 : service 부분에 추가해야함
     public int saveQuestion(Question question) {
-//        validateDuplicateQuestion(question);
         jdbcQuestionRepository.saveQuestion(question);
         return question.getQuestion_id();
     }
@@ -41,12 +41,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     public String solve(List<Question> questionList,String inputAnswer) {
         String genuineAnswer = questionList.get(0).getAnswer();
-        System.out.println("genuineAnswer = " + genuineAnswer);
-        System.out.println("inputAnswer = " + inputAnswer);
+        log.debug("genuineAnswer = " + genuineAnswer);
+        log.debug("inputAnswer = " + inputAnswer);
         int question_id = questionList.get(0).getQuestion_id();
         boolean validate = validateAnswer(genuineAnswer,inputAnswer);
         String user_id = questionList.get(0).getUser_id();
-        System.out.println("user_id = " + user_id);
         if (validate == false) {
             jdbcQuestionRepository.updateWrong(question_id,user_id);
             return "오답입니다";

@@ -48,18 +48,18 @@ public class QuestionController {
         qu.setClassification(classification);
         questionServiceIm.saveQuestion(qu) ;
         return qu;
-
     }
 
 
-    // 유저가 생성한 문제만 전체 보기
-    @RequestMapping(value = "question/list", produces = "application/json; charset=UTF-8")
+    // user_id 별로 생성한 문제 리스트 전체를 볼 수 있음.
+    @RequestMapping(value = "question/list")
     public List<Question> findAll(HttpServletRequest request, Model model) {
         String user_id = request.getParameter("userId");
         model.addAttribute("userId", user_id);
         return questionServiceIm.findAllQuestion(user_id);
     }
 
+    // question_id에 해당하는 문제 삭제
     @RequestMapping(value = "question/delete")
     public String deleteQuestion(HttpServletRequest request, Model model) {
         int question_id = Integer.parseInt(request.getParameter("questionId"));
@@ -71,17 +71,17 @@ public class QuestionController {
     @RequestMapping(value = "question/update", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     public List<Question> updateQuestion(@RequestBody UpdateQuestion uq) {
         int question_id = uq.getQuestion_id();
-        String variable = uq.getVariable();
-        String updateContents = "";
+        String category = uq.getCategory();  //변경할 카테고리 (문제 / 정답 / 분류)
+        String updateContents = ""; //변경할 내용
 
-        if (variable.equals("question")) {
+        if (category.equals("question")) {
             updateContents = uq.getUpdateContents();
-        } else if (variable.equals("answer")) {
+        } else if (category.equals("answer")) {
             updateContents = uq.getUpdateContents();
-        } else if (variable.equals("classification")) {
+        } else if (category.equals("classification")) {
             updateContents = uq.getUpdateContents();
         }
-        return questionServiceIm.updateQuestion(question_id, variable, updateContents);
+        return questionServiceIm.updateQuestion(question_id, category, updateContents);
     }
 
 

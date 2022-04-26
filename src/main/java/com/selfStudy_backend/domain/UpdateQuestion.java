@@ -4,7 +4,7 @@ import lombok.Data;
 @Data
 public class UpdateQuestion {
     private int question_id ;
-    private String variable ;
+    private String category ;
     private String updateContents ;
 
     public int getQuestion_id() {
@@ -15,12 +15,12 @@ public class UpdateQuestion {
         this.question_id = question_id;
     }
 
-    public String getVariable() {
-        return variable;
+    public String getCategory() {
+        return category;
     }
 
-    public void setVariable(String variable) {
-        this.variable = variable;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getUpdateContents() {
