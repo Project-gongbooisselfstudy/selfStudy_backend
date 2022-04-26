@@ -31,7 +31,7 @@ public class WrongController {
 
     // 유저가 생성한 문제만 전체 보기
     @RequestMapping(value = "wrong/list")
-    public List<Wrong> findAll(HttpServletRequest request, Model model) {
+    public List<Question> findAll(HttpServletRequest request, Model model) {
         String user_id = request.getParameter("userId");
         model.addAttribute("userId", user_id);
         return wrongService.findAllQuestion(user_id);
@@ -44,14 +44,14 @@ public class WrongController {
         wrongSet =  jdbcWrongRepository.loadWrong();
         return wrongSet;
     }
-//
-//    //랜덤으로 로드한 문제 풀이
-//    @RequestMapping(value = "wrong/solve", method={RequestMethod.GET})
-//    public String solveQuestion(HttpServletRequest request, Model model) {
-//        String answer = request.getParameter("answer");
-//        model.addAttribute("answer", answer);
-//        return wrongService.solve(wrongSet, answer);
-//    }
+
+    //랜덤으로 로드한 문제 풀이
+    @RequestMapping(value = "wrong/solve", method={RequestMethod.GET})
+    public String solveQuestion(HttpServletRequest request, Model model) {
+        String answer = request.getParameter("answer");
+        model.addAttribute("answer", answer);
+        return wrongService.solve(wrongSet, answer);
+    }
 
 
 }

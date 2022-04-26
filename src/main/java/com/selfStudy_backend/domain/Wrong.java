@@ -5,9 +5,7 @@ public class Wrong {
     private int wrong_id;
     private int question_id;
     private String user_id;
-    // 두 개 어떻게 쓸지?
-    private String question;
-    private String answer;
+
     public int getWrong_id() {
         return wrong_id;
     }
@@ -31,4 +29,5 @@ public class Wrong {
     public void setUser_id(String user_id) {
         this.user_id = user_id;
     }
+
 }

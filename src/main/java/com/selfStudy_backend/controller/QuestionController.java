@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class QuestionController {
 
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
     private QuestionServiceImpl questionServiceIm;
     private Question question;
     private JDBCQuestionRepository jdbcQuestionRepository;

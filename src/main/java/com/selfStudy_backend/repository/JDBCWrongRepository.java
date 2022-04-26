@@ -21,26 +21,22 @@ public class JDBCWrongRepository implements WrongRepository {
 
 
     public JDBCWrongRepository(DataSource dataSource) {
+
         jdbcTemplate = new JdbcTemplate(dataSource);
+        makeRandomList();
     }
 
 
-    // id별 문제 전체 조회
-    public List<Wrong> findAll(String user_id) {
-        String sql = "select * from testWrong where user_id = ?";
-        System.out.println("wrongrepository 실행");
-        List<Wrong> result = jdbcTemplate.query(sql, wrongRowMapper(), user_id);
+    // id별 오답문제 전체 조회
+    public List<Question> findAll(String user_id) {
+        String sql = "select * from testQuestion where user_id = ? and wrong = 1";
+        List<Question> result = jdbcTemplate.query(sql, questionMapper(), user_id);
         return result;
     }
 
-
-
-
     // TODO id 별로 나눠서 조회할 수 있도록 변경해야함
     public List<Question> loadWrong() {
-        //다시
-//        String sql = "select question, user_id, classification, answer from TESTDB.testQuestion where question_id= ? ";
-        String sql = "select q.question , q.answer , q.classification from testQuestion as q join testWrong as w on q.question_id = w.question_id where w.wrong_id=?";
+        String sql = "select q.question , q.answer , q.classification from testQuestion as q join testWrong as w on q.question_id = w.question_id where w.wrong_id=? ";
         System.out.println("Random List " + randomList);
         if (idx < randomList.size()) {
             List<Question> result = jdbcTemplate.query(sql, randomMapper(), randomList.get(idx));
@@ -54,20 +50,18 @@ public class JDBCWrongRepository implements WrongRepository {
     }
 
 
-    public List<Wrong> updateWrong() {
-        return null;
+
+    public void updateWrong(int question_id) {
+        String sql = "UPDATE testQuestion SET wrong = ? WHERE question_id = ? ";
+        Object [] params = {0, question_id}; // 정답이므로 0으로 다시 변경
+        jdbcTemplate.update(sql,params);
+        String sql2 = "select * from testQuestion where question_id = ?";
+        List<Question> result = jdbcTemplate.query(sql2,questionMapper(),question_id);
+        String sql3 = "delete from testWrong where wrong_id = ?"; // wrong 테이블에서 값 제거
+        jdbcTemplate.update(sql3,question_id);
+        System.out.println("정답이므로 wrongDB에서 문제 삭제");
     }
 
-
-    private RowMapper<Wrong> wrongRowMapper() {
-        return (rs, rowNum) -> {
-            Wrong wrong = new Wrong();
-            wrong.setWrong_id(rs.getInt("wrong_id"));
-            wrong.setQuestion_id(rs.getInt("question_id"));
-            wrong.setUser_id(rs.getString("user_id"));
-            return wrong;
-        };
-    }
 
     public void makeRandomList() {
         String sql = "select wrong_id from testWrong";
@@ -78,8 +72,22 @@ public class JDBCWrongRepository implements WrongRepository {
     private RowMapper<Integer> wrongIdMapper() {
         return (rs, rowNum) -> {
             Wrong wrong = new Wrong();
-            wrong.setQuestion_id(rs.getInt("wrong_id"));
+            wrong.setWrong_id(rs.getInt("wrong_id"));
             return wrong.getWrong_id();
+        };
+    }
+
+
+    private RowMapper<Question> questionMapper() {
+        return (rs, rowNum) -> {
+            Question question = new Question();
+            question.setQuestion_id(rs.getInt("question_id"));
+            question.setWrong(rs.getInt("wrong"));
+            question.setUser_id(rs.getString("user_id"));
+            question.setContents(rs.getString("question"));
+            question.setClassification(rs.getString("classification"));
+            question.setAnswer(rs.getString("answer"));
+            return question;
         };
     }
 
@@ -87,7 +95,7 @@ public class JDBCWrongRepository implements WrongRepository {
         return (rs, rowNum) -> {
             Question qu = new Question();
             qu.setQuestion_id(randomList.get(idx));
-            qu.setUser_id(rs.getString("user_id"));
+//            qu.setUser_id(rs.getString("user_id"));
             qu.setContents(rs.getString("question"));
             qu.setClassification(rs.getString("classification"));
             qu.setAnswer(rs.getString("answer"));
