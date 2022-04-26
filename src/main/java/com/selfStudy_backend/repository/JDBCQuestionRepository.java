@@ -37,7 +37,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     public List<Question> findById(String user_id) {
         String sql = "select * from testQuestion where user_id = ?";
         List<Question> result = jdbcTemplate.query(sql,questionRowMapper(),user_id);
-        log.debug("userID에 해당하는 문제 전체 조회");
+        log.info("userID에 해당하는 문제 전체 조회");
         return result;
     }
 
@@ -47,31 +47,31 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
         switch (category) {
             case "question": {
-                log.debug("category : question");
+                log.info("category : question");
                 String sql = "UPDATE testQuestion SET question = ? WHERE question_id = ? ";
                 Object[] params = {updateContents, question_id};
                 jdbcTemplate.update(sql, params);
-                log.debug("questionID에 해당하는 question 수정");
+                log.info("questionID에 해당하는 question 수정");
                 String sql2 = "select * from testQuestion where question_id = ?";
                 List<Question> result = jdbcTemplate.query(sql2, questionRowMapper(), question_id);
                 return result;
             }
             case "answer": {
-                log.debug("category : answer");
+                log.info("category : answer");
                 String sql = "UPDATE testQuestion SET answer = ? WHERE question_id = ? ";
                 Object[] params = {updateContents, question_id};
                 jdbcTemplate.update(sql, params);
-                log.debug("questionID에 해당하는 answer 수정");
+                log.info("questionID에 해당하는 answer 수정");
                 String sql2 = "select * from testQuestion where question_id = ?";
                 List<Question> result = jdbcTemplate.query(sql2, questionRowMapper(), question_id);
                 return result;
             }
             case "classification": {
-                log.debug("category : classification");
+                log.info("category : classification");
                 String sql = "UPDATE testQuestion SET classification = ? WHERE question_id = ? ";
                 Object[] params = {updateContents, question_id};
                 jdbcTemplate.update(sql, params);
-                log.debug("questionID에 해당하는 classification 수정");
+                log.info("questionID에 해당하는 classification 수정");
                 String sql2 = "select * from testQuestion where question_id = ?";
                 List<Question> result = jdbcTemplate.query(sql2, questionRowMapper(), question_id);
                 return result;
@@ -85,7 +85,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     public String deleteQuestion(int question_id){
         String sql = "delete from testQuestion where question_id = ?";
         jdbcTemplate.update(sql,question_id);
-        log.debug("다시 랜덤으로 문제를 생성");
+        log.info("다시 랜덤으로 문제를 생성");
         makeRandomList();
         log.info("해당 문제가 삭제되었습니다.");
         return "해당 문제가 삭제되었습니다";
@@ -94,7 +94,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     // TODO 인덱스값 이상으로 넘어갔을 때 어떻게 처리할지?
     public List<Question> loadQuestion() {
         String sql = "select question, user_id, classification, answer from TESTDB.testQuestion where question_id= ? ";
-        log.debug("Random List " + randomList);
+        log.info("Question Random List " + randomList);
         if (idx < randomList.size()) {
             List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomList.get(idx));
             idx+=1;
@@ -111,14 +111,14 @@ public class JDBCQuestionRepository implements QuestionRepository {
         String sql = "UPDATE testQuestion SET wrong = ? WHERE question_id = ? ";
         Object [] params = {1, question_id};
         jdbcTemplate.update(sql,params);
-        log.debug("wrong의 값을 1로 업데이트");
+        log.info("wrong의 값을 1로 업데이트");
         String sql2 = "select * from testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
         String sql3 = "INSERT INTO testWrong(wrong_id,question_id,user_id) VALUES (?,?,?)";
         int count = getWrong_id();
         Object[] Params = {++count ,question_id, user_id};
         jdbcTemplate.update(sql3,Params);
-        log.debug("testWrong 테이블에 insert");
+        log.info("testWrong 테이블에 insert");
         return result;
     }
 

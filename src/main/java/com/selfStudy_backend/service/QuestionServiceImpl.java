@@ -41,8 +41,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     public String solve(List<Question> questionList,String inputAnswer) {
         String genuineAnswer = questionList.get(0).getAnswer();
-        log.debug("genuineAnswer = " + genuineAnswer);
-        log.debug("inputAnswer = " + inputAnswer);
+        log.info("genuineAnswer = " + genuineAnswer);
+        log.info("inputAnswer = " + inputAnswer);
         int question_id = questionList.get(0).getQuestion_id();
         boolean validate = validateAnswer(genuineAnswer,inputAnswer);
         String user_id = questionList.get(0).getUser_id();
