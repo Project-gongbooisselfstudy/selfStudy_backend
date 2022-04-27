@@ -1,25 +1,29 @@
 package com.selfStudy_backend.controller;
 
+import com.selfStudy_backend.domain.CookieUser;
 import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.domain.UpdateQuestion;
 import com.selfStudy_backend.repository.JDBCQuestionRepository;
 import com.selfStudy_backend.service.QuestionServiceImpl;
+import org.springframework.boot.Banner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
 public class QuestionController {
-
     private JdbcTemplate jdbcTemplate;
     private QuestionServiceImpl questionServiceIm;
     private Question question;
     private JDBCQuestionRepository jdbcQuestionRepository;
     private List<Question> questionSet;
 
-    public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository, Question question) {
+    public QuestionController(JdbcTemplate jdbcTemplate, QuestionServiceImpl questionServiceIm, JDBCQuestionRepository jdbcQuestionRepository, Question question ) {
         this.jdbcTemplate = jdbcTemplate;
         this.questionServiceIm = questionServiceIm;
         this.jdbcQuestionRepository = jdbcQuestionRepository;
@@ -28,8 +32,8 @@ public class QuestionController {
 
 
     @PostMapping(value = "question/create",   produces = "application/json; charset=UTF-8")
-    public Question save(@RequestBody Question qu) {
-        int count = jdbcQuestionRepository.getQuestion_id();
+    public Question save(@RequestBody Question qu, HttpServletResponse response) {
+        int count = jdbcQuestionRepository.controller_getQuestion_id();
         String user_id = "";
         String contents = "";
         String answer = "";
@@ -47,6 +51,8 @@ public class QuestionController {
         qu.setAnswer(answer);
         qu.setClassification(classification);
         questionServiceIm.saveQuestion(qu) ;
+
+
         return qu;
     }
 
@@ -86,7 +92,6 @@ public class QuestionController {
 
 
     //랜덤으로 문제 로드하기
-    //TODO 생각해보니... userID별로 랜덤으로 섞어야함. 지금은 id 상관없이 다섞었음ㅋㅋㅋ
     @RequestMapping(value="question/load")
     public List<Question> loadQuestion() {
         questionSet =  jdbcQuestionRepository.loadQuestion();

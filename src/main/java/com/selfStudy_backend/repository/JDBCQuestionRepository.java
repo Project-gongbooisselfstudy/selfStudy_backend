@@ -1,7 +1,9 @@
 package com.selfStudy_backend.repository;
 
+import com.selfStudy_backend.domain.CookieUser;
 import com.selfStudy_backend.domain.Question;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,15 +15,15 @@ import java.util.*;
 @Repository
 public class JDBCQuestionRepository implements QuestionRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    private  JdbcTemplate jdbcTemplate;
     private int idx = 0;
     private List<Integer> randomList;
 
-
+    @Autowired
     public JDBCQuestionRepository(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        makeRandomList();  // 자꾸 2번씩 호출됨
     }
+
 
     // 문제 DB에 저장
     @Override
@@ -93,8 +95,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     // TODO 인덱스값 이상으로 넘어갔을 때 어떻게 처리할지?
     public List<Question> loadQuestion() {
-        String sql = "select question, user_id, classification, answer from TESTDB.testQuestion where question_id= ? ";
-        log.info("Question Random List " + randomList);
+        String sql = "select question, user_id, classification, answer from testQuestion where question_id= ? ";
+        log.info("Question Random List : " + randomList);
         if (idx < randomList.size()) {
             List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomList.get(idx));
             idx+=1;
@@ -115,8 +117,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
         String sql2 = "select * from testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
         String sql3 = "INSERT INTO testWrong(wrong_id,question_id,user_id) VALUES (?,?,?)";
-        int count = getWrong_id();
-        Object[] Params = {++count ,question_id, user_id};
+        int count = controller_getWrong_id();
+        Object[] Params = {count++ ,question_id, user_id};
         jdbcTemplate.update(sql3,Params);
         log.info("testWrong 테이블에 insert");
         return result;
@@ -124,8 +126,10 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     // 랜덤으로 문제 출제
     public void makeRandomList() {
-        String sql = "select question_id from testQuestion";
-        randomList = jdbcTemplate.query(sql,questionIDMapper());
+        String user_id = CookieUser.getG_id();
+        log.info("user_id = " + user_id);
+        String sql = "select question_id from testQuestion where user_id=?";
+        randomList = jdbcTemplate.query(sql,questionIDMapper(),user_id);
         Collections.shuffle(randomList);
     }
 
@@ -145,7 +149,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
 
     //controller에서 사용하는 메소드
-    public int getQuestion_id(){
+    public int controller_getQuestion_id(){
         try {
         String sql = "SELECT max(question_id) FROM testQuestion;";
         int count = jdbcTemplate.queryForObject(sql, Integer.class);
@@ -153,12 +157,16 @@ public class JDBCQuestionRepository implements QuestionRepository {
         catch (Exception e) { int count = 1 ; return count;}
     }
 
-    // TODO 시작값이 이상함 고쳐야해 ..
-    private int getWrong_id() {
-        try{ String sql = "SELECT max(wrong_id) FROM testWrong;";
-            int count = jdbcTemplate.queryForObject(sql, Integer.class);
-            return count;}
-        catch (Exception e) { int count = 1 ; return count;}
+    private int controller_getWrong_id() {
+        try{
+        String sql = "SELECT max(wrong_id) FROM testWrong;";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class);
+        return count; }
+        catch (NullPointerException e) { int count = 1 ; return count;}
+//        try{ String sql = "SELECT max(wrong_id) FROM testWrong;";
+//            int count = jdbcTemplate.queryForObject(sql, Integer.class);
+//            return count;}
+//        catch (Exception e) { int count = 1 ; return count;}
     }
 
     private RowMapper<Integer> questionIDMapper() {
@@ -180,7 +188,6 @@ public class JDBCQuestionRepository implements QuestionRepository {
             return qu;
         };
     }
-
 
 
 }
