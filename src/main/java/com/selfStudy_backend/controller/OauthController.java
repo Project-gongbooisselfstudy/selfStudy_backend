@@ -7,6 +7,7 @@ import com.selfStudy_backend.domain.User;
 import com.selfStudy_backend.helper.constants.SocialLoginType;
 import com.selfStudy_backend.repository.JDBCQuestionRepository;
 import com.selfStudy_backend.repository.JDBCUserRepository;
+import com.selfStudy_backend.repository.JDBCWrongRepository;
 import com.selfStudy_backend.service.OauthServicesImple;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,17 +42,18 @@ public class OauthController {
 
     //지민 추가
     private JDBCQuestionRepository jdbcQuestionRepository;
-
+    private JDBCWrongRepository jdbcWrongRepository;
 
 
     @Autowired
-    public OauthController(OauthServicesImple oauthService,JdbcTemplate jdbcTemplate, User user,JDBCUserRepository jdbcUserRepository, JDBCQuestionRepository jdbcQuestionRepository ){
+    public OauthController(OauthServicesImple oauthService,JdbcTemplate jdbcTemplate, User user,JDBCUserRepository jdbcUserRepository, JDBCQuestionRepository jdbcQuestionRepository , JDBCWrongRepository jdbcWrongRepository ){
         this.oauthService = oauthService;
         this.jdbcTemplate = jdbcTemplate;
         this.user = user;
         this.jdbcUserRepository = jdbcUserRepository;
         //지민 추가
         this.jdbcQuestionRepository = jdbcQuestionRepository;
+        this.jdbcWrongRepository = jdbcWrongRepository;
 
     }
     @RequestMapping(value="/{socialLoginType}")
@@ -77,20 +79,18 @@ public class OauthController {
         String id = userInfo.get("id").asText();
         String name = userInfo.get("name").asText();
 
-        System.out.println(id);
-        System.out.println(name);
+//        System.out.println(id);
+//        System.out.println(name);
 
         // 지민 추가
         CookieUser.setG_id(id);
         CookieUser.setG_name(name);
         jdbcQuestionRepository.makeRandomList();
+        jdbcWrongRepository.makeRandomList();
 
         User user2 = new User();
         user2.setG_id(id);
         user2.setG_name(name);
-
-
-
 
         oauthService.saveUser(user2);
 
