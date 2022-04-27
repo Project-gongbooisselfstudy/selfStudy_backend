@@ -2,8 +2,10 @@ package com.selfStudy_backend.controller;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.selfStudy_backend.domain.CookieUser;
 import com.selfStudy_backend.domain.User;
 import com.selfStudy_backend.helper.constants.SocialLoginType;
+import com.selfStudy_backend.repository.JDBCQuestionRepository;
 import com.selfStudy_backend.repository.JDBCUserRepository;
 import com.selfStudy_backend.service.OauthServicesImple;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 
 import org.json.simple.parser.ParseException;
@@ -35,12 +38,20 @@ public class OauthController {
     private JdbcTemplate jdbcTemplate;
     private User user;
     private JDBCUserRepository jdbcUserRepository;
+
+    //지민 추가
+    private JDBCQuestionRepository jdbcQuestionRepository;
+
+
+
     @Autowired
-    public OauthController(OauthServicesImple oauthService,JdbcTemplate jdbcTemplate, User user, JDBCUserRepository jdbcUserRepository ){
+    public OauthController(OauthServicesImple oauthService,JdbcTemplate jdbcTemplate, User user,JDBCUserRepository jdbcUserRepository, JDBCQuestionRepository jdbcQuestionRepository ){
         this.oauthService = oauthService;
         this.jdbcTemplate = jdbcTemplate;
         this.user = user;
         this.jdbcUserRepository = jdbcUserRepository;
+        //지민 추가
+        this.jdbcQuestionRepository = jdbcQuestionRepository;
 
     }
     @RequestMapping(value="/{socialLoginType}")
@@ -69,6 +80,10 @@ public class OauthController {
         System.out.println(id);
         System.out.println(name);
 
+        // 지민 추가
+        CookieUser.setG_id(id);
+        CookieUser.setG_name(name);
+        jdbcQuestionRepository.makeRandomList();
 
         User user2 = new User();
         user2.setG_id(id);
