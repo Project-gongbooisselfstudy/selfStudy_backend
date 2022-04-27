@@ -1,16 +1,12 @@
 package com.selfStudy_backend.controller;
 
-import com.selfStudy_backend.domain.CookieUser;
 import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.domain.UpdateQuestion;
 import com.selfStudy_backend.repository.JDBCQuestionRepository;
 import com.selfStudy_backend.service.QuestionServiceImpl;
-import org.springframework.boot.Banner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -52,7 +48,6 @@ public class QuestionController {
         qu.setClassification(classification);
         questionServiceIm.saveQuestion(qu) ;
 
-
         return qu;
     }
 
@@ -73,7 +68,6 @@ public class QuestionController {
         return questionServiceIm.deleteQuestion(question_id);
     }
 
-    // TODO POSTMAN 한글 인코딩 안됨;;
     @RequestMapping(value = "question/update", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     public List<Question> updateQuestion(@RequestBody UpdateQuestion uq) {
         int question_id = uq.getQuestion_id();
@@ -92,12 +86,25 @@ public class QuestionController {
 
 
     //랜덤으로 문제 로드하기
-    @RequestMapping(value="question/load")
-    public List<Question> loadQuestion() {
-        questionSet =  jdbcQuestionRepository.loadQuestion();
+    @RequestMapping(value="question/loadNext")
+    public List<Question> loadNext() {
+        questionSet =  jdbcQuestionRepository.loadNext();
         return questionSet;
     }
 
+    @RequestMapping(value="question/loadPrev")
+    public List<Question> loadPrev() {
+        questionSet =  jdbcQuestionRepository.loadPrev();
+        return questionSet;
+    }
+
+    // 원래코드
+//    @RequestMapping(value="question/load")
+//    public List<Question> loadQuestion() {
+//        questionSet =  jdbcQuestionRepository.loadQuestion();
+//        return questionSet;
+//    }
+//
     //랜덤으로 로드한 문제 풀이
     @RequestMapping(value = "question/solve", method={RequestMethod.GET})
     public String solveQuestion(HttpServletRequest request, Model model) {

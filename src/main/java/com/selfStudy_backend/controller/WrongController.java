@@ -37,11 +37,17 @@ public class WrongController {
         return wrongService.findAllQuestion(user_id);
     }
 
+
     //랜덤으로 문제 로드하기
-    //TODO 생각해보니... userID별로 랜덤으로 섞어야함. 지금은 id 상관없이 다섞었음ㅋㅋㅋ
-    @RequestMapping(value="wrong/load")
-    public List<Question> loadWrong() {
-        wrongSet =  jdbcWrongRepository.loadWrong();
+    @RequestMapping(value="wrong/loadNext")
+    public List<Question> loadNext() {
+        wrongSet =  jdbcWrongRepository.loadNext();
+        return wrongSet;
+    }
+
+    @RequestMapping(value="wrong/loadPrev")
+    public List<Question> loadPrev() {
+        wrongSet =  jdbcWrongRepository.loadPrev();
         return wrongSet;
     }
 

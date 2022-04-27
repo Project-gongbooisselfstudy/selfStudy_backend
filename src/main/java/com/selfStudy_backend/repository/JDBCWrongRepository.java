@@ -1,5 +1,6 @@
 package com.selfStudy_backend.repository;
 
+import com.selfStudy_backend.domain.CookieUser;
 import com.selfStudy_backend.domain.Question;
 import com.selfStudy_backend.domain.Wrong;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +17,12 @@ public class JDBCWrongRepository implements WrongRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private int idx = 0;
+    private int randomIdx;
     private List<Integer> randomList;
 
     public JDBCWrongRepository(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        makeRandomList();
+//        makeRandomList();
     }
 
 
@@ -32,17 +34,34 @@ public class JDBCWrongRepository implements WrongRepository {
         return result;
     }
 
-    // TODO id 별로 나눠서 조회할 수 있도록 변경해야함
-    public List<Question> loadWrong() {
+
+    public List<Question> loadNext() {
+        String sql =  "select q.question , q.answer , q.classification from testQuestion as q join testWrong as w on q.question_id = w.question_id where w.wrong_id=? ";
+        log.info("Wrong Random List " + randomList);
+        try {
+            randomIdx = randomList.get(idx++);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
+            return result;
+        }
+        catch (Exception e ) {
+            log.info("Wrong loadNext : 더이상의 문제가 없습니다");
+            randomIdx = randomList.get(randomList.size()-1);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
+            return result;}
+    }
+
+    public List<Question> loadPrev() {
         String sql = "select q.question , q.answer , q.classification from testQuestion as q join testWrong as w on q.question_id = w.question_id where w.wrong_id=? ";
         log.info("Wrong Random List " + randomList);
-        if (idx < randomList.size()) {
-            List<Question> result = jdbcTemplate.query(sql, randomMapper(), randomList.get(idx));
-            idx += 1;
+        try {
+            randomIdx = randomList.get(--idx);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
             return result;
-        } else {
-            idx -= 1;
-            List<Question> result = jdbcTemplate.query(sql, randomMapper(), randomList.get(idx));
+        }
+        catch (Exception e ) {
+            log.info("Wrong loadPrev : 더이상의 문제가 없습니다");
+            randomIdx = randomList.get(0);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
             return result;
         }
     }
@@ -63,10 +82,13 @@ public class JDBCWrongRepository implements WrongRepository {
 
 
     public void makeRandomList() {
-        String sql = "select wrong_id from testWrong";
-        randomList = jdbcTemplate.query(sql, wrongIdMapper());
+        String user_id = CookieUser.getG_id();
+        log.info("Wrong user_id = " + user_id);
+        String sql = "select wrong_id from testWrong where user_id=?";
+        randomList = jdbcTemplate.query(sql,wrongIdMapper(),user_id);
         Collections.shuffle(randomList);
     }
+
 
     private RowMapper<Integer> wrongIdMapper() {
         return (rs, rowNum) -> {
@@ -93,7 +115,7 @@ public class JDBCWrongRepository implements WrongRepository {
     private RowMapper<Question> randomMapper() {
         return (rs, rowNum) -> {
             Question qu = new Question();
-            qu.setQuestion_id(randomList.get(idx));
+            qu.setQuestion_id(randomIdx);
             qu.setContents(rs.getString("question"));
             qu.setClassification(rs.getString("classification"));
             qu.setAnswer(rs.getString("answer"));

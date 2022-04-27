@@ -17,11 +17,14 @@ public class JDBCQuestionRepository implements QuestionRepository {
 
     private  JdbcTemplate jdbcTemplate;
     private int idx = 0;
+    private int randomIdx;
     private List<Integer> randomList;
+    private JDBCWrongRepository jdbcWrongRepository;
 
     @Autowired
     public JDBCQuestionRepository(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcWrongRepository = new JDBCWrongRepository(dataSource);
     }
 
 
@@ -93,20 +96,39 @@ public class JDBCQuestionRepository implements QuestionRepository {
         return "해당 문제가 삭제되었습니다";
     }
 
-    // TODO 인덱스값 이상으로 넘어갔을 때 어떻게 처리할지?
-    public List<Question> loadQuestion() {
-        String sql = "select question, user_id, classification, answer from testQuestion where question_id= ? ";
+
+    public List<Question> loadNext() {
+        String sql =  "select question, user_id, classification, answer from testQuestion where question_id= ? ";
         log.info("Question Random List : " + randomList);
-        if (idx < randomList.size()) {
-            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomList.get(idx));
-            idx+=1;
+        try {
+            randomIdx = randomList.get(idx++);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
             return result;
         }
-        else {
-            idx-=1;
-            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomList.get(idx));
+        catch (Exception e ) {
+            log.info("Question loadNext : 더이상의 문제가 없습니다");
+            randomIdx = randomList.get(randomList.size()-1);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
             return result;}
     }
+
+    public List<Question> loadPrev() {
+        String sql = "select question, user_id, classification, answer from testQuestion where question_id= ? ";
+        try {
+            randomIdx = randomList.get(--idx);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
+            return result;
+        }
+        catch (Exception e) {
+            log.info("Question loadPrev : 더이상의 문제가 없습니다");
+            randomIdx = randomList.get(0);
+            List<Question> result = jdbcTemplate.query(sql,randomMapper(),randomIdx);
+            return result;
+        }
+    }
+
+
+
 
     // 오답인 경우, testQuestionDB의 wrong값을 변경해야함
     public List<Question> updateWrong(int question_id,String user_id) {
@@ -116,11 +138,16 @@ public class JDBCQuestionRepository implements QuestionRepository {
         log.info("wrong의 값을 1로 업데이트");
         String sql2 = "select * from testQuestion where question_id = ?";
         List<Question> result = jdbcTemplate.query(sql2,questionRowMapper(),question_id);
+        try {
         String sql3 = "INSERT INTO testWrong(wrong_id,question_id,user_id) VALUES (?,?,?)";
         int count = controller_getWrong_id();
-        Object[] Params = {count++ ,question_id, user_id};
+        Object[] Params = {count ,question_id, user_id};
         jdbcTemplate.update(sql3,Params);
-        log.info("testWrong 테이블에 insert");
+        log.info("testWrong 테이블에 insert"); }
+        catch (Exception e){
+            log.error(e.getMessage());
+        }
+        jdbcWrongRepository.makeRandomList();
         return result;
     }
 
@@ -161,12 +188,8 @@ public class JDBCQuestionRepository implements QuestionRepository {
         try{
         String sql = "SELECT max(wrong_id) FROM testWrong;";
         int count = jdbcTemplate.queryForObject(sql, Integer.class);
-        return count; }
+        return ++count; }
         catch (NullPointerException e) { int count = 1 ; return count;}
-//        try{ String sql = "SELECT max(wrong_id) FROM testWrong;";
-//            int count = jdbcTemplate.queryForObject(sql, Integer.class);
-//            return count;}
-//        catch (Exception e) { int count = 1 ; return count;}
     }
 
     private RowMapper<Integer> questionIDMapper() {
@@ -180,7 +203,7 @@ public class JDBCQuestionRepository implements QuestionRepository {
     private RowMapper<Question> randomMapper() {
         return (rs, rowNum) -> {
             Question qu = new Question();
-            qu.setQuestion_id(randomList.get(idx));
+            qu.setQuestion_id(randomIdx);
             qu.setUser_id(rs.getString("user_id"));
             qu.setContents(rs.getString("question"));
             qu.setClassification(rs.getString("classification"));

@@ -11,7 +11,9 @@ public interface WrongRepository {
     List<Question> findAll(String user_id);
 
     // 틀린문제 랜덤으로 하나씩 조회
-    List<Question> loadWrong();
+    List<Question> loadNext();
+
+    List<Question> loadPrev();
 
     // 틀린문제 풀어보고 맞은 경우 테이블에서 삭제
     void updateWrong(int question_id);
