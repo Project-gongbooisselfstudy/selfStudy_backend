@@ -57,16 +57,16 @@ public class OauthController {
 
     }
     @RequestMapping(value="/{socialLoginType}")
-    public void socialLoginType(@PathVariable(name = "socialLoginType") SocialLoginType socialLoginType, Model model)
+    public void socialLoginType(@PathVariable(name = "socialLoginType") SocialLoginType socialLoginType)
     {
-        log.info(">>사용자로부터 SNS로그인 요청을 받음 :: {} Social Login", socialLoginType);
+
         oauthService.request(socialLoginType);
 
     }
 
     @RequestMapping(value= "/{socialLoginType}/callback", produces = "application/json; charset=UTF-8")
-    public User callback(@PathVariable(name = "socialLoginType") SocialLoginType socialLoginType, @RequestParam(name = "code") String code, HttpSession session) throws ParseException {
-        log.info(">> 소셜 로그인 API 서버로부터 받은 code :: {}", code);
+    public User callback(@PathVariable(name = "socialLoginType") SocialLoginType socialLoginType, @RequestParam(name = "code") String code) throws ParseException {
+
         String JsonNode = oauthService.requestAccessToken(socialLoginType, code);
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(JsonNode);

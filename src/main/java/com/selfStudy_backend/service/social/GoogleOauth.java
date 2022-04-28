@@ -21,7 +21,8 @@ public class GoogleOauth implements SocialOauth{
 
     private final String GOOGLE_SNS_BASE_URL="https://accounts.google.com/o/oauth2/v2/auth";
     private final String GOOGLE_SNS_CLIENT_ID="285505230158-itsfrteek6vsjhr055bs532l8h7astqa.apps.googleusercontent.com";
-    private final String GOOGLE_SNS_CALLBACK_URL="http://localhost:8080/auth/google/callback";
+    private final String GOOGLE_SNS_CALLBACK_URL="http://ec2-3-38-227-105.ap-northeast-2.compute.amazonaws.com:8080/auth/google/callback";
+
     private final String GOOGLE_SNS_CLIENT_SECRET="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";
     private final String GOOGLE_SNS_TOKEN_BASE_URL = "https://www.googleapis.com/oauth2/v4/token";
 
